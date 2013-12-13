@@ -1,0 +1,40 @@
+# Enable rewrite engine and route requests to framework
+RewriteEngine On
+
+# Some servers require you to specify the `RewriteBase` directive
+# In such cases, it should be the path (relative to the document root)
+# containing this .htaccess file
+#
+# RewriteBase /
+
+RewriteCond %{REQUEST_URI} \.ini$
+RewriteRule \.ini$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} bin/.*$
+RewriteRule bin/.*$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} cache/.*$
+RewriteRule cache/.*$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} tmp/.*$
+RewriteRule tmp/.*$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} bin/.*$
+RewriteRule bin/.*$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} etc/.*$
+RewriteRule etc/.*$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} var/.*$
+RewriteRule var/.*$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} lib/.*$
+RewriteRule lib/.*$ - [R=404]
+
+RewriteCond %{REQUEST_URI} \.html?$
+RewriteRule \.html?$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L,QSA,E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
