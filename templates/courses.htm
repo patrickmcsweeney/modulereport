@@ -1,8 +1,14 @@
-<p>These are the courses we believe you are the course coordinator for. For each course you are coordinator for you should fill out a Module Report. If courses are missing or you have more than you expect you can <a href="edit/courses">edit your courses</a>.</p>
+<p>These are the courses we believe you are the course coordinator for. For each course you are coordinator for you should fill out a Module Report. If courses are missing or you have more than you expect you can <a href="{{@BASE}}/edit/courses">edit your courses</a>.</p>
 
 <ul class="my-courses">
+<check if="{{count(@courses) > 0}}">
+	<true>
 <repeat group="@courses" value="@course">
 	<li><a href="/edit/report/{{@course->crn}}"><include href="course.htm" /></a></li>
 </repeat>
+	</true>
+	<false>
+		<li>You do not appear to be module coordinator for any courses. You may need to <a href="{{@BASE}}/edit/courses">edit your courses</a>.</li>
+	</false>
 </ul>
 <p>

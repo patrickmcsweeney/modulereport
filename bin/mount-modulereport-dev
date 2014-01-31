@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo mount -t cifs //modulereportdev.soton.ac.uk/modulereportdev.soton.ac.uk -ouser=pm5c08,domain=SOTON,uid=1000 /mnt/devmodulereport

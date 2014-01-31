@@ -2,6 +2,7 @@
 
 function my_courses($f3)
 {
+	authenticate($f3);
 	$person = current_user(); 
 	$f3->set("title", "My Courses");
 	$f3->set("courses",$person->sharedCourse);
@@ -11,9 +12,10 @@ function my_courses($f3)
 
 function edit_report($f3)
 {
-	global $form_conf;
+	authenticate($f3);
 	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
 
+	$form_conf = form_conf($course);
 	$user = current_user();
 	$reports = $course->sharedReport;
 	$data = array();
@@ -23,6 +25,11 @@ function edit_report($f3)
 		{
 			$data = $report->export();
 		}
+	}
+
+	if(!array_key_exists("roleonmodule",$data))
+	{
+		$data["roleonmodule"] = "Module coordinator";
 	}
 
 	$form = new FloraForm(array("action"=>"/save/report/".$f3->get("PARAMS.crn")));
@@ -38,8 +45,9 @@ function edit_report($f3)
 
 function save_report($f3)
 {
-	global $form_conf;
+	authenticate($f3);
 	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+	$form_conf = form_conf($course);
 	$form = new FloraForm(array("action"=>"/save/report"));
 	$form->processConfig($form_conf);
 	$data = array();
@@ -64,6 +72,8 @@ function save_report($f3)
 		$user_report->$key = $value;
 	}
 	$user_report->staffid = $user->staffid;
+	$user_report->staffname = $user->name;
+	$user_report->timecompleted = time();
 
 	R::store($course);
 
@@ -72,7 +82,9 @@ function save_report($f3)
 
 function claim_courses($f3)
 {
-	$staffid="1498355";
+	authenticate($f3);
+	$user = current_user();
+	$staffid=$user->staffid;
 	$person = R::findOne("person", " staffid=? ", array($staffid));
 	$f3->set("mycourses",$person->sharedCourse);
 
@@ -87,6 +99,7 @@ function claim_courses($f3)
 
 function save_courses($f3)
 {
+	authenticate($f3);
 	$crns_str = $f3->get("REQUEST.crns");
 	$crns = explode(",", $crns_str);
 	$courses = R::find("course", " crn in ( ".R::genSlots($crns)." ) ", $crns);
@@ -97,7 +110,17 @@ function save_courses($f3)
         echo $crns,"\n"; 
 }
 
-$yesno = array( "yes"=>"Yes", "no"=>"No");
+function logout($f3){
+        $f3->set("SESSION.authenticated", false);
+        $f3->set("SESSION.username", false);
+        header("Location: /");
+}
+
+function form_conf($course){
+	F3::set("course", $course);
+	$assessment_section = Template::instance()->render("reportassessmentsection.htm");
+	$user = current_user();
+	$yesno = array( "yes"=>"Yes", "no"=>"No");
 $form_conf = array(
 #array("SECTION" => 
 #array( "fields" => array (
@@ -128,6 +151,8 @@ $form_conf = array(
 #		array("TEXT"=>array("id" => "coursework", "title"=>"Course work")),
 #		array("TEXT"=>array("id" => "other", "title"=>"Other")),
 #	))),  
+	array("TEXT"=>array("id" => "nameoflecturers", "title"=>"Name of lecturer(s)")),  
+	array("INFO"=>array("description_html"=>$assessment_section)),
 	array( "HTML"=> array( "id"=>"commentonassesmentdata", "title"=>"Comment on the assessment data", "rows"=>"20")),
 
 
@@ -152,8 +177,105 @@ array("SECTION" => array( "title" => "Review & Action Plan", "fields" => array(
 	array( "HTML"=> array( "id"=>"effectivenessofchanges", "title"=>"Please comment on the effectiveness of the changes you have made to the module this year.", "rows"=>"20")),
 	array( "HTML"=> array( "id"=>"nextenhancements", "title"=>"How should the module be enhanced next time it is taught?", "rows"=>"20")),
 ))),
-	array("TEXT"=>array("id" => "completedby", "title"=>"Completed by")),  
+	array("INFO"=>array("id" => "completedby", "description"=>"Completed by: ".$user->givenname." ".$user->familyname)),  
 	array("TEXT"=>array("id" => "roleonmodule", "title"=>"Role on module")),  
-	array("TEXT"=>array("id" => "datecompleted", "title"=>"Date")),  
-array("SUBMIT" => array( "id"=>"submit", "text"=>"Save report"))
+	array("INFO"=>array("id" => "datecompleted", "description"=>"Date completed: ".date("jS M Y"))),  
+array("SUBMIT" => array( "id"=>"submit", "text"=>"Save for later")),
+array("SUBMIT" => array( "id"=>"submit", "text"=>"Save and submit"))
 );
+	return $form_conf;
+}
+
+function authenticate($f3, $pass_through="")
+{
+	if (!$f3->exists('SESSION.authenticated'))
+	{
+		$f3->set('SESSION.authenticated', false);
+	}
+
+
+	#already authenticated
+	if($f3->get("SESSION.authenticated") == true)
+	{
+		return true;
+	}
+
+	#not yet been asked to authenticate
+	if(!(array_key_exists("username",$_POST) && array_key_exists("password", $_POST)))
+	{
+		$f3->set("title","Login");
+		$f3->set("pass_through", $pass_through);
+		$f3->set("REQUEST", $_REQUEST);
+		$f3->set("templates", array("login.htm"));
+		
+		echo Template::instance()->render("internal_style/main.htm");
+		exit;
+	}
+
+	#have submitted username and password but havent been given a session yet
+	// LDAP extension required
+	if (!extension_loaded('ldap')) {
+		// Unable to continue
+		$f3->error('LDAP module is not installed');
+		return;
+	}
+	$domain_address = "ldaps://nlbldap.soton.ac.uk/";
+	$dc=ldap_connect($domain_address);
+	if (!$dc) {
+		// Connection failed
+		trigger_error(sprintf($domain_address));
+		return FALSE;
+	}
+	ldap_set_option($dc,LDAP_OPT_PROTOCOL_VERSION,3);
+	ldap_set_option($dc,LDAP_OPT_REFERRALS,0);
+
+	if (!ldap_bind($dc)) 
+	{
+		// Bind failed
+		trigger_error("bind failed");
+		return FALSE;
+	}
+	$result=ldap_search($dc,"dc=soton,dc=ac,dc=uk",'cn='.$_POST["username"]);
+
+	if (ldap_count_entries($dc,$result)==0)
+	{
+		// Didn't return a single record
+		error("<p>Unrecognised username</p>".Template::serve("login.htm"));
+		return FALSE;
+	}
+	// Bind using credentials
+	$info=ldap_get_entries($dc,$result);
+	if (!@ldap_bind($dc,$info[0]['dn'],$_POST["password"]))
+	{
+		// Bind failed
+		error("<p>Unrecognised password</p>".Template::serve("login.htm"));
+	}
+	@ldap_unbind($dc);
+
+	if(!array_key_exists("extensionattribute10",$info[0]) || $info[0]['extensionattribute10'][0]!='Active')
+	{
+		error("Your account appears to be expired. Contact serviceline on x25656.");
+	}
+
+	if(!array_key_exists("extensionattribute9",$info[0]) || $info[0]['extensionattribute9'][0]!='staff')
+	{
+		error("Only staff may log into this service");
+	}
+
+	$staffid = $info[0]["employeenumber"][0];
+	$user = R::findOne("person", " staffid = ?", array($staffid));
+	if(!isset($user))
+	{
+		$user = R::dispense("person");
+		$user->staffid=$staffid;
+	}
+	$user->givenname = $info[0]["givenname"][0];
+	$user->familyname = $info[0]["sn"][0];
+	$user->username = $info[0]['name'][0];
+	R::store($user);
+	$f3->set("SESSION.authenticated", true);
+	$f3->set("SESSION.staffid", $staffid);
+
+	$f3->reroute('/');
+}
+

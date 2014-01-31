@@ -32,7 +32,9 @@
 			<div class="uos-hide-nav" id="uos-hide-nav" onclick="hideNavigation()">Hide navigation</div>
 			<div class="uos-header" id="uos-header">
 				<div class="uos-logo"> </div>
-				<div class="uos-logged-in-user">Logged in as pm5c08 <a href="#">Log out</a></div>
+				<check if="{{@user}}">
+					<div class="uos-logged-in-user">Logged in as {{@user->givenname}} {{@user->familyname}} <a href="{{@BASE}}/logout">Log out</a></div>
+				</check>
 				<div class="uos-app-name">
 					<h1>{{@app_name}}</h1>
 					<h2>{{@app_tag_line}}</h2>

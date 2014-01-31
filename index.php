@@ -32,6 +32,8 @@ $db_host = $f3->get('db_host');
 
 R::setup("mysql:host=$db_host;dbname=$db_name",$db_user,$db_password);
 
+$f3->set("user",current_user());
+
 if(!isset($CMD))
 {
 	$f3->run();

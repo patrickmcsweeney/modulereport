@@ -2,29 +2,6 @@
 <p>Title: <strong>{{@course->title}}</strong></p>
 <p>Semester/Year: <strong>{{@course->semester}}/{{@course->session}}</strong></p>
 <p>Main Campus: <strong>{{@course->campus}}</strong></p>
-<p>Module Level: This is a bit complicated because this module can be on various parts of a degree</p>
+<p>Module Level: <strong>{{@course->levelcode}}</strong></p> 
 <p>Faculty: <strong>{{@course->faculty}}</strong></p>
 <p>Registered Students: <strong>{{@course->numberofstudents}}</strong></p>
-<p>Name of lecturer(s): </p>
-
-<h3>Assessment Data</h3>
-<div class="ff_section">
-	<span class="ff_component ff_combo ff_" id="markdistribution_container">
-		<h4>Summary of provisional marks</h4>
-		<span class="ff_component ff_field">100%-80%: <strong>{{@course->mark10080}}%</strong>,</span>
-		<span class="ff_component ff_field">79%-70%: <strong>{{@course->mark7970}}%</strong>,</span>
-		<span class="ff_component ff_field">69%-60%: <strong>{{@course->mark6960}}%</strong>,</span>
-		<span class="ff_component ff_field">59%-50%: <strong>{{@course->mark5950}}%</strong>,</span>
-		<span class="ff_component ff_field">49%-40%: <strong>{{@course->mark4940}}%</strong>,</span>
-		<span class="ff_component ff_field">39%-25%: <strong>{{@course->mark3925}}%</strong>,</span>
-		<span class="ff_component ff_field">24%-0: <strong>{{@course->mark2400}}%</strong></span>
-	</span>
-	<span class="ff_field ff_combo" style="display:inline-block; vertical-align:top; height:3em;"><p>Average Mark: <strong>{{@course->averagemark}}%</strong></p></span>
-	<span class="ff_component ff_combo ff_" id="markdistribution_container" style="display:inline-block; vertical-align:top; height:3em;">
-		<h4>Breakdown of assessment weighting(%)</h4>
-		<span class="ff_component ff_field">Exam: <strong>{{@course->assessexam}}%</strong>,</span>
-		<span class="ff_component ff_field">Coursework: <strong>{{@course->assesscoursework}}%</strong>,</span>
-		<span class="ff_component ff_field">Other: <strong>{{@course->assessother}}%</strong></span>
-	</span>
-	
-</div>

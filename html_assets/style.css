@@ -32,3 +32,19 @@ a:hover {
 .uos-logo {
 	background:url("/html_assets/soton_white_trans.png") no-repeat scroll center center rgba(0, 0, 0, 0)
 }
+#submit_container {
+	display:inline-block !important;
+	padding-right: 3em;
+}
+
+.uos-page-content {
+	margin: 0 150px;
+}
+
+#markdistribution_container {
+	margin-left: 0;
+}
+
+#nameoflecturers {
+	width:70%;
+}
