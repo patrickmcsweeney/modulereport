@@ -88,8 +88,7 @@ function claim_courses($f3)
 	$person = R::findOne("person", " staffid=? ", array($staffid));
 	$f3->set("mycourses",$person->sharedCourse);
 
-	$departmentcode = "FP";
-	$courses = R::find("course", " departmentcode=? ORDER BY code ", array($departmentcode));
+	$courses = R::find("course", " departmentcode=? ORDER BY code ", array($user->departmentcode));
 	$f3->set("allcourses", $courses);
 	$f3->set("title", "Search courses");
 	$f3->set("templates", array("findcourses.htm"));
@@ -262,9 +261,6 @@ function authenticate($f3, $pass_through="")
 		error("Only staff may log into this service");
 	}
 
-	#$bits = explode(",OU=",$info[0]["distinguishedname"][0])
-	$department = strtoupper($bits[1]);
-	print_r($department);exit;
 	$staffid = $info[0]["employeenumber"][0];
 	$user = R::findOne("person", " staffid = ?", array($staffid));
 	if(!isset($user))
@@ -275,6 +271,8 @@ function authenticate($f3, $pass_through="")
 	$user->givenname = $info[0]["givenname"][0];
 	$user->familyname = $info[0]["sn"][0];
 	$user->username = $info[0]['name'][0];
+	$bits = explode(",OU=",$info[0]["distinguishedname"][0]);
+	$user->department = strtoupper($bits[2]);
 	R::store($user);
 	$f3->set("SESSION.authenticated", true);
 	$f3->set("SESSION.staffid", $staffid);
