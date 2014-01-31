@@ -272,7 +272,7 @@ function authenticate($f3, $pass_through="")
 	$user->familyname = $info[0]["sn"][0];
 	$user->username = $info[0]['name'][0];
 	$bits = explode(",OU=",$info[0]["distinguishedname"][0]);
-	$user->department = strtoupper($bits[2]);
+	$user->departmentcode = strtoupper($bits[2]);
 	R::store($user);
 	$f3->set("SESSION.authenticated", true);
 	$f3->set("SESSION.staffid", $staffid);
