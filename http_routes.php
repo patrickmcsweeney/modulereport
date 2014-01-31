@@ -262,6 +262,9 @@ function authenticate($f3, $pass_through="")
 		error("Only staff may log into this service");
 	}
 
+	#$bits = explode(",OU=",$info[0]["distinguishedname"][0])
+	$department = strtoupper($bits[1]);
+	print_r($department);exit;
 	$staffid = $info[0]["employeenumber"][0];
 	$user = R::findOne("person", " staffid = ?", array($staffid));
 	if(!isset($user))
