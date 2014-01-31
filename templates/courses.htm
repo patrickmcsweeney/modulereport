@@ -1,0 +1,8 @@
+<p>These are the courses we believe you are the course coordinator for. For each course you are coordinator for you should fill out a Module Report. If courses are missing or you have more than you expect you can <a href="edit/courses">edit your courses</a>.</p>
+
+<ul class="my-courses">
+<repeat group="@courses" value="@course">
+	<li><a href="/edit/report/{{@course->crn}}"><include href="course.htm" /></a></li>
+</repeat>
+</ul>
+<p>

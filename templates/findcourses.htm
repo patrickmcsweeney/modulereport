@@ -1,0 +1,76 @@
+<script type="text/javascript">
+	//this creates the :icontains() selector in jQuery 
+	//is the same as contains but case insensitive
+	$.expr[":"].icontains = $.expr.createPseudo(function(arg)
+	{
+		return function( elem )
+		{
+			return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+		};
+	});
+	function search() 
+	{
+		$(".departmentcourses .course").hide();
+		$(".departmentcourses .course:icontains('"+$("#course-search").val()+"')").show();
+	}
+	function addCourse(e, crn)
+	{
+		e.preventDefault();	
+		$("#"+crn+" a").remove();
+		$("#"+crn).append("<a href='#' onclick=\"removeCourse(event,'"+crn+"')\">Remove</a>");				
+		$(".mycourses").append($("#"+crn).remove());
+	}
+	function removeCourse(e, crn)
+	{
+		e.preventDefault();	
+		$("#"+crn+" a").remove();
+		$("#"+crn).append("<a href='#' onclick=\"addCourse(event,'"+crn+"')\">Add</a>");				
+		$(".departmentcourses").append($("#"+crn).remove());
+
+	}
+	function saveCourses()
+	{
+		document.courses = [];
+		$(".mycourses div").each(function() {
+			document.courses.push($(this).attr("id"));
+		});
+		$.ajax("{{@BASE}}/save/courses", {
+			type:"POST",
+			data: {crns:document.courses.join(",")},
+			success: function( data, status, jqXHR )
+			{
+				$(".courses-status").hide();
+				$(".courses-status").html("Save successful");
+				$(".courses-status").slideDown({complete:function(){
+					setTimeout(function(){$(".courses-status").slideUp();}, 1000);
+				}});
+				
+			}
+		});
+	}
+</script>
+
+<p>On this page you can correct the information about which courses you lead. Add and remove courses from you "My courses". You can save as often as you like. Remember to save when you are happy with your selection. Once you have finished you can go to the <a href="{{@BASE}}/">my modules page</a> to fill out reports for your modules.</p>
+
+<h3>My courses</h3>
+<div class="courses-status" style="display:none;">
+
+</div>
+<div class="mycourses">
+	<repeat group="{{@mycourses}}" value="{{@course}}">
+		<div class="course" id="{{@course->crn}}"><include href="course.htm" /> - <a href="#" onclick="removeCourse(event, '{{@course->crn}}')">Remove</a></div>
+	</repeat>
+</div>
+<input type="button" value="Save these courses" onclick="saveCourses()"/>
+<h3>Select courses</h3>
+
+<p>Select courses to add to your "My courses" list. You should only select modules for which you are the course coordinator.</p>
+
+<div class="course-search">
+	Search: <input id="course-search" type="text" onkeyup="search()">
+</div>
+<div class="departmentcourses">
+	<repeat group="{{@allcourses}}" value="{{@course}}">
+		<div class="course" id="{{@course->crn}}"><include href="course.htm" /> - <a href="#" onclick="addCourse(event, '{{@course->crn}}')">Add</a></div>
+	</repeat>
+</div>

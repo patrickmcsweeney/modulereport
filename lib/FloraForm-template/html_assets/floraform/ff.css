@@ -13,7 +13,8 @@
 }
 .ff_combo {
 	display: block;
-	border: solid 10px #f00;
+	padding: 10px;
+	border: solid 1px #999;
 }
 .ff_combo .ff_field {
 	display: inline-block;

@@ -51,6 +51,10 @@ a {
 	text-decoration: none;
 }
 
+strong, b {
+	font-weight:bold;
+}
+
 .uos-container {
 	background-color: white;
 }
@@ -137,6 +141,7 @@ a {
 }
 
 .uos-main-nav {
+	min-height: 30px;
 	background-color: #5394C3;
 	/* IE10 Consumer Preview */ 
 	background-image: -ms-linear-gradient(top, #5394C3 0%, #3674a0 100%);
@@ -271,6 +276,7 @@ a {
 
 .uos-footer {
 	padding: 5px;
+	margin-top:40px;
 	font-size:70%;
 	color: #FFFFFF;
 	background-color: #2C5C81;
@@ -374,6 +380,7 @@ h3 {
 	color: #113f63;
 	font-size: 110%;
 	font-weight: bold;
+	margin: 2em 0 1em;
 }
 
 h4 {

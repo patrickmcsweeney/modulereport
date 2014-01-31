@@ -1,9 +1,159 @@
 <?php
 
-function front_page($f3)
+function my_courses($f3)
 {
-	$f3->set("title", "Hello");
-        $f3->set('templates', array("hello.htm"));
+	$person = current_user(); 
+	$f3->set("title", "My Courses");
+	$f3->set("courses",$person->sharedCourse);
+	$f3->set("templates", array("courses.htm"));
+        echo Template::instance()->render("internal_style/main.htm");
+}
+
+function edit_report($f3)
+{
+	global $form_conf;
+	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+
+	$user = current_user();
+	$reports = $course->sharedReport;
+	$data = array();
+	foreach($reports as $report)
+	{
+		if($report->staffid == $user->staffid)
+		{
+			$data = $report->export();
+		}
+	}
+
+	$form = new FloraForm(array("action"=>"/save/report/".$f3->get("PARAMS.crn")));
+	$form->processConfig($form_conf);
+	$f3->set("title", "Module  Report");
+	$f3->set("form", $form);
+	$f3->set("course", $course);
+	$f3->set("formdata", $data);
+        $f3->set('templates', array("reporttopsection.htm", "form.htm"));
 
         echo Template::instance()->render("internal_style/main.htm");
 }
+
+function save_report($f3)
+{
+	global $form_conf;
+	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+	$form = new FloraForm(array("action"=>"/save/report"));
+	$form->processConfig($form_conf);
+	$data = array();
+	$form->fromForm($data, $_POST);
+	$reports = $course->sharedReport;
+	$user = current_user();
+
+	foreach($reports as $report)
+	{
+		if($report->staffid == $user->staffid)
+		{
+			$user_report = $report;
+		}
+	}
+	if(!isset($user_report))
+	{
+		$user_report = R::dispense("report");
+		$course->sharedReport[] = $user_report;
+	}
+	foreach($data as $key => $value)
+	{
+		$user_report->$key = $value;
+	}
+	$user_report->staffid = $user->staffid;
+
+	R::store($course);
+
+	$f3->reroute("/");
+}
+
+function claim_courses($f3)
+{
+	$staffid="1498355";
+	$person = R::findOne("person", " staffid=? ", array($staffid));
+	$f3->set("mycourses",$person->sharedCourse);
+
+	$departmentcode = "FP";
+	$courses = R::find("course", " departmentcode=? ORDER BY code ", array($departmentcode));
+	$f3->set("allcourses", $courses);
+	$f3->set("title", "Search courses");
+	$f3->set("templates", array("findcourses.htm"));
+  
+        echo Template::instance()->render("internal_style/main.htm");
+}
+
+function save_courses($f3)
+{
+	$crns_str = $f3->get("REQUEST.crns");
+	$crns = explode(",", $crns_str);
+	$courses = R::find("course", " crn in ( ".R::genSlots($crns)." ) ", $crns);
+	$user = current_user();
+	$user->sharedCourse = $courses;
+	R::store($user);
+
+        echo $crns,"\n"; 
+}
+
+$yesno = array( "yes"=>"Yes", "no"=>"No");
+$form_conf = array(
+#array("SECTION" => 
+#array( "fields" => array (
+#	array("TEXT"=>array("id" => "modulecode", "title"=>"Module Code")),
+#	array("TEXT"=>array("id" => "title", "title"=>"Module Title")),  
+#	array("CHOICE" => array("id" => "semester", "title"=>"Semester", "choices" => array("1"=>"Semester 1", "2"=>"Semester 2", "both"=>"Both semesters", "na"=> "None of these"))),
+#	array("CHOICE" => array("id" => "session", "title"=>"Academic Session", "choices" => array("201314"=>"2013-14"))),
+#	array("CHOICE" => array("id" => "maincampus", "title"=>"Main Campus", "choices" => array("highfield"=>"Highfield", "avenue"=>"Avenue", "winchester"=>"Winchester", "malaysia"=>"Mayalsia"))),
+#	array("TEXT"=>array("id" => "modulelevel", "title"=>"Module Level")),  
+#	array("CHOICE" => array("id" => "faculty", "title"=>"Faculty", "choices" => array("F7"=>"Faculty of Phycial Sciences and Engineering"))),
+#	array("TEXT"=>array("id" => "registeredstudents", "title"=>"Registered Students")),  
+#	array("TEXT"=>array("id" => "nameoflecturer", "title"=>"Name of Lecturer")),  
+#))),
+#array("SECTION" => array( "title" => "Assessment Data", "fields" => array(
+#	array("TEXT"=>array("id" => "averagemark", "title"=>"Average Mark")),  
+#	array( "COMBO" => array( "id"=>"markdistribution", "title"=>"Summary of provisional marks", "fields" => array(
+#		array("TEXT"=>array("id" => "10080", "title"=>"100%-80%")),
+#		array("TEXT"=>array("id" => "7970", "title"=>"79%-70%")),
+#		array("TEXT"=>array("id" => "6960", "title"=>"69%-60%")),
+#		array("TEXT"=>array("id" => "5950", "title"=>"59%-50%")),
+#		array("TEXT"=>array("id" => "4940", "title"=>"49%-40%")),
+#		array("TEXT"=>array("id" => "3925", "title"=>"39%-25%")),
+#		array("TEXT"=>array("id" => "2400", "title"=>"24%-0")),
+#		
+#	))),
+#	array("COMBO"=>array("id" => "assessmentbreakdown", "title"=>"Breakdown of assessment weighting:", "fields" => array( 
+#		array("TEXT"=>array("id" => "exam", "title"=>"Exam")),
+#		array("TEXT"=>array("id" => "coursework", "title"=>"Course work")),
+#		array("TEXT"=>array("id" => "other", "title"=>"Other")),
+#	))),  
+	array( "HTML"=> array( "id"=>"commentonassesmentdata", "title"=>"Comment on the assessment data", "rows"=>"20")),
+
+
+#))),
+array("SECTION" => array( "title" => "Student Feedback: Module Survey", "fields" => array(
+	array( "HTML"=> array( "id"=>"commentonmoduleevaluation", "title"=>"Comment on the module evaluation results", "rows"=>"20")),
+	array("TEXT"=>array("id" => "responserate", "title"=>"Response rate")),  
+
+))),
+array("SECTION" => array( "title" => "Your evaluation of the module", "fields" => array(
+	array("CHOICE" => array("id" => "deviate", "title"=>"Did you deviate from the module profile?", "choices" => $yesno)),
+	array("CHOICE" => array("id" => "updatespecification", "title"=>"Does the module specification need updating?", "choices" => $yesno)),
+	array("CHOICE" => array("id" => "studentsprepared", "title"=>"Were students adequately prepared e.g. by any pre-requisite modules?", "choices" => $yesno)),
+	array("CHOICE" => array("id" => "learningresourcesupport", "title"=>"Did the learning resources adequately support the module?", "choices" => $yesno)),
+	array("CHOICE" => array("id" => "studentprogress", "title"=>"Do you feel the students made adequate progress on the module?", "choices" => $yesno)),
+	array("CHOICE" => array("id" => "feedbacktimely", "title"=>"Was feedback given within four weeks of coursework submission?", "choices" => $yesno)),
+	array( "HTML"=> array( "id"=>"expandasappropriate", "title"=>"Please expand as appropriate", "rows"=>"20")),
+	array( "HTML"=> array( "id"=>"feedbackavaiabletostudents", "title"=>"State how feedback on the assessment will be made available to students", "rows"=>"20")),
+
+))),
+array("SECTION" => array( "title" => "Review & Action Plan", "fields" => array(
+	array( "HTML"=> array( "id"=>"effectivenessofchanges", "title"=>"Please comment on the effectiveness of the changes you have made to the module this year.", "rows"=>"20")),
+	array( "HTML"=> array( "id"=>"nextenhancements", "title"=>"How should the module be enhanced next time it is taught?", "rows"=>"20")),
+))),
+	array("TEXT"=>array("id" => "completedby", "title"=>"Completed by")),  
+	array("TEXT"=>array("id" => "roleonmodule", "title"=>"Role on module")),  
+	array("TEXT"=>array("id" => "datecompleted", "title"=>"Date")),  
+array("SUBMIT" => array( "id"=>"submit", "text"=>"Save report"))
+);

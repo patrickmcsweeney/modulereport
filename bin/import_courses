@@ -1,0 +1,106 @@
+#!/usr/bin/php
+<?php
+$CMD = true;
+require_once(__DIR__."/../index.php");
+
+$usage = "
+	command <bannerfile> <markbreakdownfile>
+";
+
+$markbreakdown = fopen($argv[2], 'r') or die($usage);
+fgetcsv($markbreakdown);
+
+$breakdowns = array();
+#    [0] => TERM_CODE
+#    [1] => CRN
+#    [2] => PART_TERM
+#    [3] => NO_STUDENTS
+#    [4] => AVG_MARK
+#    [5] => MARK_100_80
+#    [6] => MARK_79_70
+#    [7] => MARK_69_60
+#    [8] => MARK_59_50
+#    [9] => MARK_49_40
+#    [10] => MARK_39_25
+#    [11] => MARK_24_0
+#    [12] => ASSESS_EXAM
+#    [13] => ASSESS_CRSE
+#    [14] => ASSESS_OTHER
+
+while( $course = fgetcsv($markbreakdown))
+{
+	$course[0] = 201314;
+	$breakdowns[$course[1]][$course[0]] = $course;
+}
+
+$file = fopen($argv[1], 'r') or die($usage);
+
+fgetcsv($file, 0, "|");
+
+$people = array();
+
+#    [0] => CRN
+#    [1] => CAMPUS_CODE
+#    [2] => COLL_CODE
+#    [3] => COLL_DESC
+#    [4] => DEPT_CODE
+#    [5] => DEPT_DESC
+#    [6] => COURSE_CODE
+#    [7] => SECTION_TITLE
+#    [8] => COURSE_TITLE
+#    [9] => PTRM_CODE
+#    [10] => PTRM_DESC
+#    [11] => CREDIT_HOURS
+#    [12] => INSTRUCTOR1_ID
+#    [13] => INSTRUCTOR1_LAST_NAME
+#    [14] => INSTRUCTOR1_FIRST_NAME
+#    [15] => CAMPUS_DESC
+#    [16] => LONG_TITLE
+
+while( ($data = fgetcsv($file, 0, "|")) )
+{
+	$course = R::findOne("course", " crn=? ", array($data[0]));
+	if(!isset($course))
+	{
+		$course = R::dispense("course");
+	}
+
+	$course->title = $data[16];
+	$course->code = $data[6];
+	$course->crn = $data[0];
+	$course->semester = $data[10];
+	$course->campus = $data[15];
+	$course->facultycode = $data[2];
+	$course->faculty = $data[3];
+	$course->departmentcode = $data[4];
+	$course->department = $data[5];
+	$course->session = "201314";
+	$course->partofdegree = "";
+
+	if(!empty($breakdowns[$data[0]]))
+	{
+		$course->numberofstudents = $breakdowns[$data[0]]["201314"][3];
+		$course->averagemark = $breakdowns[$data[0]]["201314"][4];
+		$course->mark10080 = $breakdowns[$data[0]]["201314"][5];
+		$course->mark7970 = $breakdowns[$data[0]]["201314"][6];
+		$course->mark6960 = $breakdowns[$data[0]]["201314"][7];
+		$course->mark5950 = $breakdowns[$data[0]]["201314"][8];
+		$course->mark4940 = $breakdowns[$data[0]]["201314"][9];
+		$course->mark3925 = $breakdowns[$data[0]]["201314"][10];
+		$course->mark2400 = $breakdowns[$data[0]]["201314"][11];
+		$course->assessexam = $breakdowns[$data[0]]["201314"][12];
+		$course->assesscoursework = $breakdowns[$data[0]]["201314"][13];
+		$course->assessother = $breakdowns[$data[0]]["201314"][14];
+	}
+	$person = R::findOne("person", " staffid=? ", array($data[12]));
+	if(!isset($person))
+	{
+		$person = R::dispense("person");
+		$person->staffid = $data[12];
+		$person->givenname = $data[14];
+		$person->familyname = $data[13];
+		R::store($person);
+	}
+	$course->sharedPerson[] = $person;
+	R::store($course);
+}

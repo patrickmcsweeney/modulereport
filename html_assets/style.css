@@ -1,0 +1,34 @@
+#markdistribution_container input, #assessmentbreakdown_container input {
+	width: 3em;
+}
+.ff_field, .ff_combo {
+	margin-bottom: 10px;
+}
+
+.uos-search {
+	display: none;
+}
+
+.course-search {
+	padding: 10px;
+	margin: 10px 50px;
+}
+
+.my-courses li, .course {
+	margin: 5px 0;
+}
+
+.courses-status {
+	background-color: #b5ecb5;
+	border: 1px solid #4ec14e;
+	margin: 10px 0;
+	padding: 10px;
+	text-align: center;
+}
+
+a:hover {
+	border-bottom: 1px solid blue;
+}
+.uos-logo {
+	background:url("/html_assets/soton_white_trans.png") no-repeat scroll center center rgba(0, 0, 0, 0)
+}
