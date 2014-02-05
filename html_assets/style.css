@@ -1,6 +1,11 @@
 #markdistribution_container input, #assessmentbreakdown_container input {
 	width: 3em;
 }
+
+#markdistribution_container .ff_field {
+	display: inline-block;
+}
+
 .ff_field, .ff_combo {
 	margin-bottom: 10px;
 }

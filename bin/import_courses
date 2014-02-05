@@ -104,5 +104,10 @@ while( ($data = fgetcsv($file, 0, "|")) )
 		R::store($person);
 	}
 	$course->sharedPerson[] = $person;
+	if($course->numberofstudents == 0)
+	{
+		echo "CRN ".$course->crn." has no students and will not be stored\n";
+		continue;	
+	}
 	R::store($course);
 }
