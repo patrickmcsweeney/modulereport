@@ -6,6 +6,7 @@ function current_user()
 	{
         	$staffid = F3::get("SESSION.staffid");
 		#$staffid = "1498355";
+		#$staffid = "1497952";
         	return R::findOne("person", " staffid=? ", array($staffid));
 	}
 }

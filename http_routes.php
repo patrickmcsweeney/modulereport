@@ -102,7 +102,12 @@ function claim_courses($f3)
 	$user = current_user();
 	$staffid=$user->staffid;
 	$person = R::findOne("person", " staffid=? ", array($staffid));
-	$f3->set("mycourses",$person->sharedCourse);
+	if(isset($person))
+	{
+		$f3->set("mycourses",$person->sharedCourse);
+	}else{
+		$f3->set("mycourses", array());
+	}
 
 	$courses = R::find("course", " departmentcode=? ORDER BY code ", array($user->departmentcode));
 	$f3->set("allcourses", $courses);
