@@ -5,7 +5,22 @@ function my_courses($f3)
 	authenticate($f3);
 	$person = current_user(); 
 	$f3->set("title", "My Courses");
+	$reports = array();
+	foreach($person->sharedCourse as $course)
+	{
+		foreach($course->sharedReport as $report)
+		{	
+			if($report->staffid == $person->staffid)
+			{
+				if($report->submit == "Save and submit")
+				{
+					$reports[$course->crn] = true;
+				}
+			}
+		}
+	}
 	$f3->set("courses",$person->sharedCourse);
+	$f3->set("reports_complete", $reports);
 	$f3->set("templates", array("courses.htm"));
         echo Template::instance()->render("internal_style/main.htm");
 }
@@ -52,6 +67,7 @@ function save_report($f3)
 	$form->processConfig($form_conf);
 	$data = array();
 	$form->fromForm($data, $_POST);
+
 	$reports = $course->sharedReport;
 	$user = current_user();
 

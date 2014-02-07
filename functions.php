@@ -175,7 +175,7 @@ function authenticate($f3, $pass_through="")
 	$user->username = $info[0]['name'][0];
 	$bits = explode(",OU=",$info[0]["distinguishedname"][0]);
 	$user->departmentcode = strtoupper($bits[2]);
-	if($user->username == "pm5c08")
+	if($user->username == "pm5c08" || $user->username == "lsb2")
 	{
 		$user->departmentcode = "FP";
 	}

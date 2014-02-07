@@ -3,12 +3,24 @@
 <ul class="my-courses">
 <check if="{{count(@courses) > 0}}">
 	<true>
-<repeat group="@courses" value="@course">
-	<li><a href="/edit/report/{{@course->crn}}"><include href="course.htm" /></a></li>
-</repeat>
+		<repeat group="@courses" value="@course">
+			<check if="{{!array_key_exists(@course->crn, @reports_complete)}}">
+				<li><a href="/edit/report/{{@course->crn}}"><include href="course.htm" /></a></li>
+			</check>
+		</repeat>
 	</true>
 	<false>
 		<li>You do not appear to be module coordinator for any courses. You may need to <a href="{{@BASE}}/edit/courses">edit your courses</a>.</li>
 	</false>
 </ul>
-<p>
+
+<check if="{{count(@reports_complete) > 0}}">
+<h3>Submitted report</h3>
+<ul class="my-courses">
+	<repeat group="@courses" value="@course">
+		<check if="{{array_key_exists(@course->crn, @reports_complete)}}">
+			<li><a href="/edit/report/{{@course->crn}}"><include href="course.htm" /></a></li>
+		</check>
+	</repeat>
+</ul>
+</check>
