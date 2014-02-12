@@ -58,6 +58,14 @@ function edit_report($f3)
         echo Template::instance()->render("internal_style/main.htm");
 }
 
+function json_report($f3)
+{
+	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+	#$course = R::findOne("course", " crn = ? ", array( $f3->get("PARAMS.crn"))); 
+	echo json_encode( R::exportAll($course) );
+	
+}
+
 function save_report($f3)
 {
 	authenticate($f3);
