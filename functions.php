@@ -43,18 +43,19 @@ $form_conf = array(
 #	))),
 	array("TEXT"=>array("id" => "nameoflecturers", "title"=>"Name of lecturer(s)")),  
 		
+	array("INFO"=>array("description_html"=>"<p>List the names of all staff associated with the teaching of this module.</p>")),
 	array("INFO"=>array("description_html"=>$assessment_section)),
 	array("SECTION"=>array("id"=>"markdistribution", "title"=>"Breakdown of assessment weighting:", "fields" => array( 
 		array("TEXT"=>array("id" => "assessexam", "title"=>"Exam")),
 		array("TEXT"=>array("id" => "assesscoursework", "title"=>"Course work")),
 		array("TEXT"=>array("id" => "assessother", "title"=>"Other")),
 	))),  
-	array( "HTML"=> array( "id"=>"commentonassesmentdata", "title"=>"Comment on the assessment data", "rows"=>"20")),
+	array( "HTML"=> array( "id"=>"commentonassesmentdata", "title"=>"Comment on the assessment data", "rows"=>"20", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.")),
 
 
 #))),
 array("SECTION" => array( "title" => "Student Feedback: Module Survey", "fields" => array(
-	array( "HTML"=> array( "id"=>"commentonmoduleevaluation", "title"=>"Comment on the module evaluation results", "rows"=>"20")),
+	array( "HTML"=> array( "id"=>"commentonmoduleevaluation", "title"=>"Comment on the module evaluation results", "rows"=>"20", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.")),
 	array("TEXT"=>array("id" => "responserate", "title"=>"Response rate")),  
 
 ))),
@@ -65,13 +66,13 @@ array("SECTION" => array( "title" => "Your evaluation of the module", "fields" =
 	array("CHOICE" => array("id" => "learningresourcesupport", "title"=>"Did the learning resources adequately support the module?", "choices" => $yesno)),
 	array("CHOICE" => array("id" => "studentprogress", "title"=>"Do you feel the students made adequate progress on the module?", "choices" => $yesno)),
 	array("CHOICE" => array("id" => "feedbacktimely", "title"=>"Was feedback given within four weeks of coursework submission?", "choices" => $yesno)),
-	array( "HTML"=> array( "id"=>"expandasappropriate", "title"=>"Please expand as appropriate", "rows"=>"20")),
-	array( "HTML"=> array( "id"=>"feedbackavaiabletostudents", "title"=>"State how feedback on the assessment will be made available to students", "rows"=>"20")),
+	array( "HTML"=> array( "id"=>"expandasappropriate", "title"=>"Please expand as appropriate", "rows"=>"20", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.")),
+	array( "HTML"=> array( "id"=>"feedbackavaiabletostudents", "title"=>"State how feedback on the assessment will be made available to students", "rows"=>"20", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.")),
 
 ))),
 array("SECTION" => array( "title" => "Review & Action Plan", "fields" => array(
-	array( "HTML"=> array( "id"=>"effectivenessofchanges", "title"=>"Please comment on the effectiveness of the changes you have made to the module this year.", "rows"=>"20")),
-	array( "HTML"=> array( "id"=>"nextenhancements", "title"=>"How should the module be enhanced next time it is taught?", "rows"=>"20")),
+	array( "HTML"=> array( "id"=>"effectivenessofchanges", "title"=>"Please comment on the effectiveness of the changes you have made to the module this year.", "rows"=>"20", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.")),
+	array( "HTML"=> array( "id"=>"nextenhancements", "title"=>"How should the module be enhanced next time it is taught?", "rows"=>"20", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.", "description"=>"Please note it is possible to copy and paste formatted text and tables into the sections below.")),
 ))),
 	array("INFO"=>array("id" => "completedby", "description"=>"Completed by: ".$user->givenname." ".$user->familyname)),  
 	array("TEXT"=>array("id" => "roleonmodule", "title"=>"Role on module")),  
