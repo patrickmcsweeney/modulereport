@@ -4,7 +4,7 @@ function my_courses($f3)
 {
 	authenticate($f3);
 	$person = current_user(); 
-	$f3->set("title", "My Courses");
+	$f3->set("title", "My Modules");
 	$reports = array();
 	foreach($person->sharedCourse as $course)
 	{
@@ -136,6 +136,14 @@ function save_courses($f3)
 	R::store($user);
 
         echo $crns,"\n"; 
+}
+
+function guidance($f3)
+{
+	$f3->set("title", "Guidance ");
+	$f3->set("templates", array("guidance.htm"));
+  
+        echo Template::instance()->render("internal_style/main.htm");
 }
 
 function logout($f3){
