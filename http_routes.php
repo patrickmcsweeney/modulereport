@@ -138,10 +138,10 @@ function save_courses($f3)
         echo $crns,"\n"; 
 }
 
-function guidence($f3)
+function guidance($f3)
 {
-	$f3->set("title", "Guidence ");
-	$f3->set("templates", array("guidence.htm"));
+	$f3->set("title", "Guidance ");
+	$f3->set("templates", array("guidance.htm"));
   
         echo Template::instance()->render("internal_style/main.htm");
 }
