@@ -15,14 +15,14 @@
 	}
 	function addCourse(e, crn)
 	{
-		e.preventDefault();	
+		(e.preventDefault) ? e.preventDefault() : e.returnValue = false;
 		$("#"+crn+" a").remove();
 		$("#"+crn).append("<a href='#' onclick=\"removeCourse(event,'"+crn+"')\">Remove</a>");				
 		$(".mycourses").append($("#"+crn).remove());
 	}
 	function removeCourse(e, crn)
 	{
-		e.preventDefault();	
+		(e.preventDefault) ? e.preventDefault() : e.returnValue = false;
 		$("#"+crn+" a").remove();
 		$("#"+crn).append("<a href='#' onclick=\"addCourse(event,'"+crn+"')\">Add</a>");				
 		$(".departmentcourses").append($("#"+crn).remove());
