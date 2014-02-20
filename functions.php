@@ -84,7 +84,7 @@ array("SUBMIT" => array( "id"=>"submit", "text"=>"Save and submit"))
 	$assessmenttotal = $course->assessexam + $course->assesscoursework + $course->assessother;
 	if($assessmenttotal >= 99)
 	{
-		unset($form_conf[2]);
+		unset($form_conf[3]);
 	}
 	return $form_conf;
 }
