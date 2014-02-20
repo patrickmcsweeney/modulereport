@@ -119,7 +119,7 @@ function claim_courses($f3)
 
 	$courses = R::find("course", " departmentcode=? ORDER BY code ", array($user->departmentcode));
 	$f3->set("allcourses", $courses);
-	$f3->set("title", "Search courses");
+	$f3->set("title", "Search modules");
 	$f3->set("templates", array("findcourses.htm"));
   
         echo Template::instance()->render("internal_style/main.htm");

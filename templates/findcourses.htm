@@ -50,9 +50,9 @@
 	}
 </script>
 
-<p>On this page you can correct the information about which courses you lead. By adding and removing courses from your "My courses" page. You can save as often as you like. Remember to save when you are happy with your selection. Once you have finished you can go to the <a href="{{@BASE}}/">my modules page</a> to fill out reports for your modules.</p>
+<p>On this page you can correct the information about which modules you coordinate. By adding and removing modules from your "My modules" page. You can save as often as you like. Remember to save when you are happy with your selection. Once you have finished you can go to the <a href="{{@BASE}}/">my modules page</a> to fill out reports for your modules.</p>
 
-<h3>My courses</h3>
+<h3>My modules</h3>
 <div class="courses-status" style="display:none;">
 
 </div>
@@ -62,12 +62,12 @@
 	</repeat>
 </div>
 <input type="button" value="Save these courses" onclick="saveCourses()"/>
-<h3>Select courses</h3>
+<h3>Select modules</h3>
 
 <p>Select courses to add to your "My courses" list. You should only select modules for which you are the course coordinator.</p>
 <check if="{{count(@allcourses) > 0}}">
 	<false>
-		<p>Your department does not have any courses in the system. That is probably because you are in the listed as being in the professional services. Your department code is <strong>{{@user->departmentcode}}</strong>. If this is correct you should <a href="http://www.soton.ac.uk/ithelp">contact serviceline</a>.
+		<p>Your department does not have any modules in the system. That is probably because you are in the listed as being in the professional services. Your department code is <strong>{{@user->departmentcode}}</strong>. If this is correct you should <a href="http://www.soton.ac.uk/ithelp">contact serviceline</a>.
 	</false>
 	<true>
 		<div class="course-search">
