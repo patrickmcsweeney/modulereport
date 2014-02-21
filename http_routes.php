@@ -146,6 +146,52 @@ function guidance($f3)
         echo Template::instance()->render("internal_style/main.htm");
 }
 
+function report_menu($f3)
+{
+	$f3->set("title", "Choose a report ");
+	$f3->set("templates", array("reportmenu.htm"));
+  
+        echo Template::instance()->render("internal_style/main.htm");
+}
+
+function faculty_menu($f3)
+{
+	$f3->set("title", "Choose a faculty ");
+	$f3->set("templates", array("facultymenu.htm"));
+  
+        echo Template::instance()->render("internal_style/main.htm");
+}
+
+function report_completed($f3)
+{
+	$sql = 'SELECT distinct course.* FROM course JOIN course_report ON course.id = course_report.course_id JOIN report ON course_report.report_id = report.id WHERE report.submit = "Save and submit" and course.facultycode = ? ';
+
+    	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty")));
+
+	$courses = R::convertToBeans('course',$rows);
+	
+	$f3->set("courses", $courses);
+	$f3->set("title", "Completed module reports");
+	$f3->set("templates", array("reportcourses.htm"));
+  
+        echo Template::instance()->render("internal_style/main.htm");
+}
+
+function report_uncompleted($f3)
+{
+	$sql = 'SELECT distinct course.* FROM course LEFT JOIN course_report ON course.id = course_report.course_id LEFT JOIN report on course_report.report_id  = report.id WHERE (report.submit != "Save and submit" or report.submit is null) and course.facultycode = ?';
+	print $f3->get("PARAMS.faculty");
+    	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty")));
+
+	$courses = R::convertToBeans('course',$rows);
+	
+	$f3->set("courses", $courses);
+	$f3->set("title", "Uncompleted module reports");
+	$f3->set("templates", array("reportcourses.htm"));
+  
+        echo Template::instance()->render("internal_style/main.htm");
+}
+
 function logout($f3){
         $f3->set("SESSION.authenticated", false);
         $f3->set("SESSION.username", false);
