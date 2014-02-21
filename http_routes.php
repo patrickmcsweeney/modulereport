@@ -44,7 +44,7 @@ function edit_report($f3)
 
 	if(!array_key_exists("roleonmodule",$data))
 	{
-		$data["roleonmodule"] = "Module coordinator";
+		$data["roleonmodule"] = "Module lead";
 	}
 
 	$form = new FloraForm(array("action"=>"/save/report/".$f3->get("PARAMS.crn")));
