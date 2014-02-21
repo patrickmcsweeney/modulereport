@@ -180,7 +180,7 @@ function report_completed($f3)
 function report_uncompleted($f3)
 {
 	$sql = 'SELECT distinct course.* FROM course LEFT JOIN course_report ON course.id = course_report.course_id LEFT JOIN report on course_report.report_id  = report.id WHERE (report.submit != "Save and submit" or report.submit is null) and course.facultycode = ?';
-	print $f3->get("PARAMS.faculty");
+
     	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty")));
 
 	$courses = R::convertToBeans('course',$rows);
