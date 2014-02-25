@@ -1,0 +1,17 @@
+.uos-header, .uos-footer, .uos-show-nav, .uos-hide-nav, .print-pdf{
+	display: none;
+}
+body {
+	background-color: #ffffff;
+}
+.uos-page-content {
+	margin: 2cm;
+}
+.uos-print{
+	display:block;
+	float:right;
+	width: 6cm;
+}
+h2 {
+	margin-top: 1.2cm;
+}

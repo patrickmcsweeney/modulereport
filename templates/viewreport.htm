@@ -1,0 +1,44 @@
+<section>
+<div class="print-pdf"><a href="/pdf/reports/{{@course->crn}}">Download this report as PDF</a></div>
+<include href="reporttopsection.htm" />
+<p>Name of lecturer(s): {{@report->nameoflecturers}}</p>
+
+<include href="reportassessmentsection.htm" />
+<div>
+	<h3>Comments on the assessment data</h3>
+	{{@report->commentonassesmentdata}}
+</div>
+<div>
+	<h3>Student Feedback: Module Survey</h3>
+	{{@report->commentonmoduleevaluation}}
+	<p>Response rate: {{@report->responserate}}
+</div>
+<div>
+	<h3>Your evaluation of the module</h3>
+	<p>Did you deviate from the module profile?: {{@report->deviate}}</p>
+	<p>Does the module specification need updating?: {{@report->updatespecification}}</p>
+	<p>Were students adequately prepared e.g. by any pre-requisite modules?: {{@report->studentsprepared}}</p>
+	<p>Did the learning resources adequately support the module?: {{@report->learningresourcesupport}}</p>
+	<p>Do you feel the students made adequate progress on the module?: {{@report->studentprogress}}</p>
+	<p>Was feedback given within four weeks of coursework submission?: {{@report->feedbacktimely}}</p>
+	<h4>Please expand as appropriate</h4>
+	{{@report->expandasappropriate}}
+	<h4>State how feedback on the assessment will be made available to students</h4>
+	{{@report->feedbackavaiabletostudents}}
+</div>
+
+<div>
+	<h3>Review &amp; Action Plan</h3>
+	<h4>Please comment on the effectiveness of the changes you have made to the module this year.</h4>
+	{{@report->effectivenessofchanges}}
+
+	<h4>How should the module be enhanced next time it is taught?</h4>
+	{{@report->nextenhancements}}
+</div>
+
+<div>
+	<p>Completed by: {{@report->staffname}}</p>
+	<p>Role on module: {{@report->roleonmodule}}</p>
+	<p>Date completed: {{date("jS M Y", @report->timecompleted)}}</p>
+</div>
+</section>

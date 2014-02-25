@@ -398,3 +398,7 @@ td, th {
 	text-align: left;
 	line-height: 140%;
 }
+
+.uos-print {
+	display:none;
+}

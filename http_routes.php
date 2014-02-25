@@ -96,12 +96,38 @@ function save_report($f3)
 		$user_report->$key = $value;
 	}
 	$user_report->staffid = $user->staffid;
-	$user_report->staffname = $user->name;
+	$user_report->staffname = $user->givenname." ".$user->familyname 
 	$user_report->timecompleted = time();
 
 	R::store($course);
 
 	$f3->reroute("/");
+}
+
+function view_reports($f3)
+{
+	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+
+	$reports = $course->sharedReport;
+	$f3->set("reports", $reports);
+	$f3->set("course", $course);
+	$f3->set("title", "Module report for ".$course->code." - ".$course->title);
+	$f3->set("templates", array("viewreports.htm"));
+        echo Template::instance()->render("internal_style/main.htm");
+}
+
+function pdf_reports($f3)
+{
+	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+#ECON1001modrepS1_201314.pdf
+	$filename = $course->code."modrep".$course->semestercode."_".$course->session.".pdf";
+	$url = $f3->get("SCHEME")."://".$f3->get("HOST")."/view/reports/".$course->crn;
+
+	header('Content-Type: application/octet-stream');
+	header('Content-Transfer-Encoding: Binary'); 
+	header('Content-disposition: attachment; filename="'.$filename.'"');
+	
+	echo shell_exec($f3->get("ROOT")."/lib/wkhtmltox/bin/wkhtmltopdf  --print-media-type --images --quiet $url - ");
 }
 
 function claim_courses($f3)
