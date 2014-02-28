@@ -1,7 +1,23 @@
 <p>{{count(@courses)}} module(s) found.</p>
+<p><a href="?csv=csvs">Download this as a spreadsheet</a></p>
 <ul class="my-courses">
 		<repeat group="@courses" value="@course">
-				<li><include href="course.htm" /></li>
+			<li>
+				<check if="{{count(@course->sharedReport)>0}}">
+					<true>
+						<a href="/view/reports/{{@course->crn}}"><include href="course.htm" /></a>
+					</true>
+					<false>
+						<include href="course.htm" />
+					</false>
+				</check>
+				<check if="{{count(@course->sharedPerson) > 0}}">
+					<set person="{{array_pop(@course->sharedPerson)}}" />
+					 - {{@person->givenname}}
+					{{@person->familyname}}
+					({{@person->staffid}})
+				</check>
+			</li>
 		</repeat>
 </check>
 </ul>

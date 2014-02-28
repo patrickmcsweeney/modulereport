@@ -11,6 +11,21 @@ function current_user()
 	}
 }
 
+function output_csv($courses, $filename)
+{
+        header('Content-Type: application/octet-stream');
+        header('Content-Transfer-Encoding: Binary');
+        header('Content-disposition: attachment; filename="'.$filename.'"');
+	
+	$fh = fopen ( "php://output", "w" );
+	fputcsv($fh, array("module_code", "crn", "title", "givenname", "familyname", "staffid" ) );
+	foreach($courses as $course)
+	{
+		$person = array_pop($course->sharedPerson);
+		fputcsv($fh, array($course->code, $course->crn, $course->title, $person->givenname, $person->familyname, $person->staffid ));
+	}
+}
+
 function form_conf($course){
 	F3::set("course", $course);
 	$assessment_section = Template::instance()->render("reportassessmentsection.htm");
@@ -20,8 +35,7 @@ $form_conf = array(
 #array("SECTION" => 
 #array( "fields" => array (
 #	array("TEXT"=>array("id" => "modulecode", "title"=>"Module Code")),
-#	array("TEXT"=>array("id" => "title", "title"=>"Module Title")),  
-#	array("CHOICE" => array("id" => "semester", "title"=>"Semester", "choices" => array("1"=>"Semester 1", "2"=>"Semester 2", "both"=>"Both semesters", "na"=> "None of these"))),
+#	array("TEXT"=>array("id" => "title", "title"=>"Module Title")),  #	array("CHOICE" => array("id" => "semester", "title"=>"Semester", "choices" => array("1"=>"Semester 1", "2"=>"Semester 2", "both"=>"Both semesters", "na"=> "None of these"))),
 #	array("CHOICE" => array("id" => "session", "title"=>"Academic Session", "choices" => array("201314"=>"2013-14"))),
 #	array("CHOICE" => array("id" => "maincampus", "title"=>"Main Campus", "choices" => array("highfield"=>"Highfield", "avenue"=>"Avenue", "winchester"=>"Winchester", "malaysia"=>"Mayalsia"))),
 #	array("TEXT"=>array("id" => "modulelevel", "title"=>"Module Level")),  

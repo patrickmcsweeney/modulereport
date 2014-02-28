@@ -96,7 +96,7 @@ function save_report($f3)
 		$user_report->$key = $value;
 	}
 	$user_report->staffid = $user->staffid;
-	$user_report->staffname = $user->givenname." ".$user->familyname 
+	$user_report->staffname = $user->givenname." ".$user->familyname; 
 	$user_report->timecompleted = time();
 
 	R::store($course);
@@ -182,7 +182,8 @@ function report_menu($f3)
 
 function faculty_menu($f3)
 {
-	$f3->set("title", "Choose a faculty ");
+	$report_titles = array("completed"=>"Completed module reports", "uncompleted"=>"Uncompleted module reports");
+	$f3->set("title", $report_titles[$f3->get("PARAMS.report")]);
 	$f3->set("templates", array("facultymenu.htm"));
   
         echo Template::instance()->render("internal_style/main.htm");
@@ -196,11 +197,19 @@ function report_completed($f3)
 
 	$courses = R::convertToBeans('course',$rows);
 	
+	if(array_key_exists("csv",$_GET))
+	{
+		output_csv($courses,"completed.csv");
+		exit;
+	}
+
 	$f3->set("courses", $courses);
 	$f3->set("title", "Completed module reports");
 	$f3->set("templates", array("reportcourses.htm"));
   
-        echo Template::instance()->render("internal_style/main.htm");
+	echo Template::instance()->render("internal_style/main.htm");
+	
+	
 }
 
 function report_uncompleted($f3)
@@ -211,6 +220,12 @@ function report_uncompleted($f3)
 
 	$courses = R::convertToBeans('course',$rows);
 	
+	if(array_key_exists("csv",$_GET))
+	{
+		output_csv($courses, "uncompleted.csv");
+		exit;
+	}
+
 	$f3->set("courses", $courses);
 	$f3->set("title", "Uncompleted module reports");
 	$f3->set("templates", array("reportcourses.htm"));
