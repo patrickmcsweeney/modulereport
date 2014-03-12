@@ -122,12 +122,14 @@ function pdf_reports($f3)
 #ECON1001modrepS1_201314.pdf
 	$filename = $course->code."modrep".$course->semestercode."_".$course->session.".pdf";
 	$url = $f3->get("SCHEME")."://".$f3->get("HOST")."/view/reports/".$course->crn;
-
+	
+	header("Pragma: ");
+	header("Cache-Control: ");
 	header('Content-Type: application/octet-stream');
 	header('Content-Transfer-Encoding: Binary'); 
 	header('Content-disposition: attachment; filename="'.$filename.'"');
 	
-	echo shell_exec($f3->get("ROOT")."/lib/wkhtmltox/bin/wkhtmltopdf  --print-media-type --images --quiet $url - ");
+	echo shell_exec($f3->get("ROOT")."/lib/wkhtmltox/bin/wkhtmltopdf --margin-top 25mm --margin-bottom 25mm --margin-left 5mm --margin-right 5mm --print-media-type --images --quiet $url - ");
 }
 
 function claim_courses($f3)

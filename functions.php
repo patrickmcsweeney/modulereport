@@ -14,8 +14,10 @@ function current_user()
 function output_csv($courses, $filename)
 {
         header('Content-Type: application/octet-stream');
+	header("Pragma: ");
+	header("Cache-Control: ");
         header('Content-Transfer-Encoding: Binary');
-        header('Content-disposition: attachment; filename=\"'.$filename.'\"');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
 	
 	$fh = fopen ( "php://output", "w" );
 	fputcsv($fh, array("module_code", "crn", "title", "givenname", "familyname", "staffid" ) );
