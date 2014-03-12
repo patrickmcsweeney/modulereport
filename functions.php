@@ -15,7 +15,7 @@ function output_csv($courses, $filename)
 {
         header('Content-Type: application/octet-stream');
         header('Content-Transfer-Encoding: Binary');
-        header('Content-disposition: attachment; filename="'.$filename.'"');
+        header('Content-disposition: attachment; filename=\"'.$filename.'\"');
 	
 	$fh = fopen ( "php://output", "w" );
 	fputcsv($fh, array("module_code", "crn", "title", "givenname", "familyname", "staffid" ) );
