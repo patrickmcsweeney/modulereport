@@ -53,3 +53,9 @@ a:hover {
 #nameoflecturers {
 	width:70%;
 }
+
+.assessment-weighting, .average-mark {
+	display:inline-block; 
+	vertical-align:top; 
+	height:3em;
+}

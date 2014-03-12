@@ -11,7 +11,14 @@ body {
 	display:block;
 	float:right;
 	width: 6cm;
+	padding-right: 2cm;
 }
 h2 {
 	margin-top: 1.2cm;
 }
+.assessment-weighting, .average-mark {
+        display:block; 
+        vertical-align: auto; 
+        height:3em;
+}
+

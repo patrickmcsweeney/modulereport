@@ -10,9 +10,9 @@
 		<span class="ff_component ff_field">39-25: <strong>{{@course->mark3925}}%</strong>,</span>
 		<span class="ff_component ff_field">24-0: <strong>{{@course->mark2400}}%</strong></span>
 	</span>
-	<span class="ff_field ff_combo" style="display:inline-block; vertical-align:top; height:3em;"><p>Average Mark: <strong>{{@course->averagemark}}%</strong></p></span>
+	<span class="ff_field ff_combo average-mark"><p>Average Mark: <strong>{{@course->averagemark}}%</strong></p></span>
 	<check if="{{(@course->assessexam + @course->assesscoursework + @course->assessother) >= 99}}">
-		<span class="ff_component ff_combo ff_" id="markdistribution_container" style="display:inline-block; vertical-align:top; height:3em;">
+		<span class="ff_component ff_combo ff_ assessment-weighting" id="markdistribution_container">
 			<h4>Breakdown of assessment weighting(%)</h4>
 			<span class="ff_component ff_field">Exam: <strong>{{@course->assessexam}}%</strong>,</span>
 			<span class="ff_component ff_field">Coursework: <strong>{{@course->assesscoursework}}%</strong>,</span>
