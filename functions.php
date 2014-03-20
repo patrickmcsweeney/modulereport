@@ -20,11 +20,11 @@ function output_csv($courses, $filename)
         header('Content-Disposition: attachment;filename="'.$filename.'"');
 	
 	$fh = fopen ( "php://output", "w" );
-	fputcsv($fh, array("module_code", "crn", "title", "givenname", "familyname", "staffid" ) );
+	fputcsv($fh, array("module_code", "crn", "title", "semester", "givenname", "familyname", "staffid" ) );
 	foreach($courses as $course)
 	{
 		$person = array_pop($course->sharedPerson);
-		fputcsv($fh, array($course->code, $course->crn, $course->title, $person->givenname, $person->familyname, $person->staffid ));
+		fputcsv($fh, array($course->code, $course->crn, $course->title, $course->semester, $person->givenname, $person->familyname, $person->staffid ));
 	}
 }
 
