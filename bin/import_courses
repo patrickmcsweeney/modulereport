@@ -67,7 +67,7 @@ while( ($data = fgetcsv($file, 0, "|")) )
 		$course = R::dispense("course");
 	}
 
-	$course->title = $data[16];
+	$course->title = @$data[16];
 	$course->code = $data[6];
 	$course->crn = $data[0];
 	$course->semester = $data[10];
