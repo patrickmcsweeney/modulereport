@@ -1,0 +1,41 @@
+#!/bin/php
+<?php 
+if(count($argv) < 2)
+{
+	print "command <infile> | sort | uniq > <outfile>";
+}
+$fh = fopen($argv[1], 'r');
+$out = fopen("php://stdout", 'r');
+$headings = fgetcsv($fh, 0, "|");
+
+$new_headings = array("CRN", "CAMPUS_CODE", "COLL_CODE", "COLL_DESC", "DEPT_CODE", "DEPT_DESC", "COURSE_CODE", "SECTION_TITLE", "COURSE_TITLE", "PTRM_CODE", "PTRM_DESC", "CREDIT_HOURS", "INSTRUCTOR1_ID", "INSTRUCTOR1_LAST_NAME", "INSTRUCTOR1_FIRST_NAME", "CAMPUS_DESC", "LONG_TITLE", "COURSE_EFF_TERM_CODE", "LEVEL_CODE", );
+
+$heading_map = array();
+
+for($i=0;  $i < count($headings); $i++)
+{
+	$from = $headings[$i];
+	for($j=0; $j < count($new_headings); $j++)
+	{
+		$to = $new_headings[$j];
+		if($from == $to)
+		{
+			$heading_map[$i] = $j;
+		}
+	}
+}
+#print_r($heading_map);exit;
+while($line = fgetcsv($fh, 0, "|"))
+{
+	$out_line = array();
+	foreach($heading_map as $from => $to)
+	{
+		# yeah i know its hideous. it maps the right value in the input spreadsheet to the write column in the output spreadsheet
+		# if you can do it more elegantly feel free
+		@$out_line[$to] = @$line[$from];
+	}
+	ksort($out_line);
+#	print_r($out_line); exit;
+
+	fputcsv($out, $out_line, "|");
+}
