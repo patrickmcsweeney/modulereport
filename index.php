@@ -25,6 +25,8 @@ foreach ($includes as $file)
         require_once($f3->get("ROOT")."/".$file);
 }
 
+$department_map = unserialize(file_get_contents(__DIR__."/var/departments.php"));
+
 $db_name = $f3->get('db_name');
 $db_password = $f3->get('db_password');
 $db_user = $f3->get('db_user');

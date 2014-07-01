@@ -107,6 +107,7 @@ array("SUBMIT" => array( "id"=>"submit", "text"=>"Save and submit"))
 
 function authenticate($f3, $pass_through="")
 {
+	global $department_map;
 	if (!$f3->exists('SESSION.authenticated'))
 	{
 		$f3->set('SESSION.authenticated', false);
@@ -135,7 +136,7 @@ function authenticate($f3, $pass_through="")
 	// LDAP extension required
 	if (!extension_loaded('ldap')) {
 		// Unable to continue
-		$f3->error('LDAP module is not installed');
+		$f3->error(500,'LDAP module is not installed');
 		return;
 	}
 	$domain_address = "ldaps://nlbldap.soton.ac.uk/";
@@ -159,7 +160,7 @@ function authenticate($f3, $pass_through="")
 	if (ldap_count_entries($dc,$result)==0)
 	{
 		// Didn't return a single record
-		error("<p>Unrecognised username</p>".Template::serve("login.htm"));
+		$f3->error(401,"<p>Unrecognised username</p>".Template::serve("login.htm"));
 		return FALSE;
 	}
 	// Bind using credentials
@@ -167,18 +168,18 @@ function authenticate($f3, $pass_through="")
 	if (!@ldap_bind($dc,$info[0]['dn'],$_POST["password"]))
 	{
 		// Bind failed
-		error("<p>Unrecognised password</p>".Template::serve("login.htm"));
+		$f3->error(401,"<p>Unrecognised password</p>".Template::serve("login.htm"));
 	}
 	@ldap_unbind($dc);
 
 	if(!array_key_exists("extensionattribute10",$info[0]) || $info[0]['extensionattribute10'][0]!='Active')
 	{
-		error("Your account appears to be expired. Contact serviceline on x25656.");
+		$f3->error(401,"Your account appears to be expired. Contact serviceline on x25656.");
 	}
 
-	if(!array_key_exists("extensionattribute9",$info[0]) || $info[0]['extensionattribute9'][0]!='staff')
+	if(!array_key_exists("extensionattribute9",$info[0]) || $info[0]['extensionattribute9'][0]!='staff' || $info[0]['extensionattribute9'][0]!='staff')
 	{
-		error("Only staff may log into this service");
+		$f3->error(401,"Only staff may log into this service");
 	}
 
 	$staffid = $info[0]["employeenumber"][0];
@@ -197,6 +198,7 @@ function authenticate($f3, $pass_through="")
 	{
 		$user->departmentcode = "EB";
 	}
+	$user->facultycode = $department_map[$user->departmentcode]["parent"]["finance_code"];
 	R::store($user);
 	$f3->set("SESSION.authenticated", true);
 	$f3->set("SESSION.staffid", $staffid);
