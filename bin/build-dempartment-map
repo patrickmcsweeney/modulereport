@@ -1,0 +1,20 @@
+#!/usr/bin/php
+<?php
+
+	$departments = array();
+	$orgchart = json_decode(file_get_contents("http://data.southampton.ac.uk/dumps/org/2014-07-01/org.json"), true);
+	foreach($orgchart as $org)
+	{
+		foreach($org["suborganisations"] as $sub_org)
+		{
+			if(array_key_exists("finance_code", $sub_org))
+			{
+				$departments[$sub_org["finance_code"]] = $sub_org;
+				$departments[$sub_org["finance_code"]]["parent"] = $org;
+				
+			}
+		}
+	}
+	
+	
+	file_put_contents(__DIR__."/../var/departments.php", serialize($departments));
