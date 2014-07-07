@@ -14,7 +14,11 @@
 				
 			}
 		}
+		if("F4" == @$org["finance_code"])
+		{
+			$departments["KW"]["parent"] = $org;
+
+		}
 	}
-	
 	
 	file_put_contents(__DIR__."/../var/departments.php", serialize($departments));

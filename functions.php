@@ -177,7 +177,7 @@ function authenticate($f3, $pass_through="")
 		$f3->error(401,"Your account appears to be expired. Contact serviceline on x25656.");
 	}
 
-	if(!array_key_exists("extensionattribute9",$info[0]) || $info[0]['extensionattribute9'][0]!='staff' || $info[0]['extensionattribute9'][0]!='staff')
+	if(!array_key_exists("extensionattribute9",$info[0]) || !($info[0]['extensionattribute9'][0]!='staff' || $info[0]['extensionattribute9'][0]!='generic'))
 	{
 		$f3->error(401,"Only staff may log into this service");
 	}
@@ -189,9 +189,9 @@ function authenticate($f3, $pass_through="")
 		$user = R::dispense("person");
 		$user->staffid=$staffid;
 	}
-	$user->givenname = $info[0]["givenname"][0];
-	$user->familyname = $info[0]["sn"][0];
-	$user->username = $info[0]['name'][0];
+	$user->givenname = @$info[0]["givenname"][0];
+	$user->familyname = @$info[0]["sn"][0];
+	$user->username = @$info[0]['name'][0];
 	$bits = explode(",OU=",$info[0]["distinguishedname"][0]);
 	$user->departmentcode = strtoupper($bits[2]);
 	if($user->username == "pm5c08" || $user->username == "lsb2" || $user->username == "ml2n11")
