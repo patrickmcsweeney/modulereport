@@ -24,7 +24,7 @@ function output_csv($courses, $filename)
 	foreach($courses as $course)
 	{
 		$person = array_pop($course->sharedPerson);
-		fputcsv($fh, array($course->code, $course->crn, $course->title, $course->semester, $person->givenname, $person->familyname, $person->staffid ));
+		fputcsv($fh, array(@$course->code, @$course->crn, @$course->title, @$course->semester, @$person->givenname, @$person->familyname, @$person->staffid ));
 	}
 }
 
