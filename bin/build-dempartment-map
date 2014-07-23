@@ -19,6 +19,9 @@
 			$departments["KW"]["parent"] = $org;
 
 		}
+		#admin staff are in department which has the same department code as faculty code...
+		$departments[@$org["finance_code"]] = @$org;
+		$departments[@$org["finance_code"]]["parent"] = @$org;
 	}
-	
+
 	file_put_contents(__DIR__."/../var/departments.php", serialize($departments));
