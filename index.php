@@ -4,7 +4,7 @@ $f3=require('lib/fatfree-master/lib/base.php');
 $f3->config($f3->get("ROOT").'/config.ini');
 $f3->config($f3->get("ROOT").'/secrets.ini');
 
-$f3->set("main_nav", array("My Modules"=>"/", "Edit Modules"=>"/edit/courses", "Reports"=>"/report"));
+$f3->set("main_nav", array("My Modules"=>"/", "Edit Modules"=>"/edit/courses", "Reports"=>"/report", "Help"=>"/guidance"));
 $f3->set("secondary_nav", array());
 $f3->set("inpage_nav", array());
 
