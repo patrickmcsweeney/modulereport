@@ -199,7 +199,7 @@ function authenticate($f3, $pass_through="")
 		#$user->departmentcode = "RA";
 		$user->departmentcode = "TR";
 	}
-	$user->facultycode = $department_map[$user->departmentcode]["parent"]["finance_code"];
+	$user->facultycode = $department_map[$user->departmentcode];
 
 	R::store($user);
 	$f3->set("SESSION.authenticated", true);

@@ -1,5 +1,5 @@
 #!/usr/bin/php 
 <?php
 $department_map = unserialize(file_get_contents(__DIR__."/../var/departments.php"));
-echo $department_map[$argv[1]]["parent"]["finance_code"], "\n";
+echo $department_map[$argv[1]], "\n";
 
