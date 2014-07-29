@@ -19,9 +19,16 @@
 			$departments["KW"]["parent"] = $org;
 
 		}
+		if("F1" == @$org["finance_code"])
+		{
+			$departments["TR"]["parent"] = $org;
+		}
+
 		#admin staff are in department which has the same department code as faculty code...
-		$departments[@$org["finance_code"]] = @$org;
-		$departments[@$org["finance_code"]]["parent"] = @$org;
+		if(preg_match('/^F\d/',@$org["finance_code"])){
+			$departments[@$org["finance_code"]] = @$org;
+			$departments[@$org["finance_code"]]["parent"] = @$org;
+		}
 	}
 
 	file_put_contents(__DIR__."/../var/departments.php", serialize($departments));
