@@ -197,10 +197,10 @@ function authenticate($f3, $pass_through="")
 	if($user->username == "pm5c08" || $user->username == "lsb2" || $user->username == "ml2n11")
 	{
 		#$user->departmentcode = "RA";
-		$user->departmentcode = "EB";
-		
+		$user->departmentcode = "TR";
 	}
 	$user->facultycode = $department_map[$user->departmentcode]["parent"]["finance_code"];
+
 	R::store($user);
 	$f3->set("SESSION.authenticated", true);
 	$f3->set("SESSION.staffid", $staffid);
