@@ -1,5 +1,5 @@
 <?php
-
+ini_set('max_execution_time', 300); # yeah i know but the module list is really long...
 $f3=require('lib/fatfree-master/lib/base.php');
 $f3->config($f3->get("ROOT").'/config.ini');
 $f3->config($f3->get("ROOT").'/secrets.ini');

@@ -145,7 +145,14 @@ function claim_courses($f3)
 		$f3->set("mycourses", array());
 	}
 
-	$courses = R::find("course", " facultycode=? ORDER BY code ", array($user->facultycode));
+	if($user->facultycode)
+	{
+		$courses = R::find("course", " facultycode=? ORDER BY code ", array($user->facultycode));
+	}
+	else
+	{
+		$courses = R::find("course", " ORDER BY code " );
+	}
 	$f3->set("allcourses", $courses);
 	$f3->set("title", "Search modules");
 	$f3->set("templates", array("findcourses.htm"));
