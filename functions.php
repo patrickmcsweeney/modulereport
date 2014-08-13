@@ -57,7 +57,7 @@ $form_conf = array(
 #		array("TEXT"=>array("id" => "2400", "title"=>"24%-0")),
 #		
 #	))),
-	array("TEXT"=>array("id" => "nameoflecturers", "title"=>"Name of lecturer(s)")),  
+	array("TEXTAREA"=>array("id" => "nameoflecturers", "title"=>"Name of lecturer(s)")),  
 		
 	array("INFO"=>array("description_html"=>"<p>List the names of all staff associated with the teaching of this module.</p>")),
 	array("INFO"=>array("description_html"=>$assessment_section)),

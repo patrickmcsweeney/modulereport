@@ -200,7 +200,7 @@ function faculty_menu($f3)
 
 function report_completed($f3)
 {
-	$sql = 'SELECT distinct course.* FROM course JOIN course_report ON course.id = course_report.course_id JOIN report ON course_report.report_id = report.id WHERE report.submit = "Save and submit" and course.facultycode = ? ';
+	$sql = 'SELECT distinct course.* FROM course JOIN course_report ON course.id = course_report.course_id JOIN report ON course_report.report_id = report.id WHERE report.submit = "Save and submit" and course.facultycode = ? order by course.code ';
 
     	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty")));
 
@@ -223,7 +223,7 @@ function report_completed($f3)
 
 function report_uncompleted($f3)
 {
-	$sql = 'SELECT distinct course.* FROM course LEFT JOIN course_report ON course.id = course_report.course_id LEFT JOIN report on course_report.report_id  = report.id WHERE (report.submit != "Save and submit" or report.submit is null) and course.facultycode = ?';
+	$sql = 'SELECT distinct course.* FROM course LEFT JOIN course_report ON course.id = course_report.course_id LEFT JOIN report on course_report.report_id  = report.id WHERE (report.submit != "Save and submit" or report.submit is null) and course.facultycode = ? order by course.code ';
 
     	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty")));
 
