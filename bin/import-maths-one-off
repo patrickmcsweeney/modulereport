@@ -1,0 +1,46 @@
+#!/usr/bin/php
+<?php
+$CMD = true;
+require_once(__DIR__."/../index.php");
+
+$usage = "
+        command <maths.csv>
+";
+
+$in_file = fopen($argv[1], 'r') or die($usage);
+$headings = fgetcsv($in_file, 0, "\t", '"');
+
+while($data = fgetcsv($in_file, 0, "\t", '"'))
+{
+	$report = array();
+	for($i=0; $i < count($headings); $i++)
+	{
+		$report[$headings[$i]] = $data[$i];
+	}
+#	print_r($report);
+
+        $course = R::findOne("course", " code=? ", array($report["id"]));
+
+	if(!isset($course))
+	{
+		echo "No course for ",$report["id"],"\n";
+		continue;
+	}
+
+	unset($report["id"]);
+
+        $reports = $course->sharedReport;
+
+	$user_report = R::dispense("report");
+	$course->sharedReport = array($user_report);
+
+        foreach($report as $key => $value)
+        {
+                $user_report->$key = $value;
+        }
+
+        $user_report->timecompleted = time();
+
+        R::store($course);
+
+}
