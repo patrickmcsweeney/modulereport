@@ -5,7 +5,7 @@
 			<li>
 				<check if="{{count(@course->sharedReport)>0}}">
 					<true>
-						<a href="/view/reports/{{@course->crn}}"><include href="course.htm" /></a> - {{date("jS M Y",array_pop(@course->sharedReport)->timecompleted)}}
+						<a href="/view/reports/{{@course->crn}}/{{@SESSION.selected_session}}"><include href="course.htm" /></a> - {{date("jS M Y",array_pop(@course->sharedReport)->timecompleted)}}
 					</true>
 					<false>
 						<include href="course.htm" />

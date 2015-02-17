@@ -1,5 +1,5 @@
 <section>
-<div class="print-pdf"><a href="/pdf/reports/{{@course->crn}}">Download this report as PDF</a></div>
+<div class="print-pdf"><a href="/pdf/reports/{{@course->crn}}/{{@PARAMS.session}}">Download this report as PDF</a></div>
 <include href="reporttopsection.htm" />
 <p>Name of lecturer(s): {{@report->nameoflecturers}}</p>
 
@@ -11,12 +11,17 @@
 <div>
 	<h3>Student Feedback: Module Survey</h3>
 	{{@report->commentonmoduleevaluation}}
-	<p>Response rate: {{@report->responserate}}
+	<p>Response rate: 
+	<check if="{{@report->responserate}}">
+		<true>{{@report->responserate}}</true>
+		<false>{{@course->evasysresponserate}}</false>
+	</check>
+	% </p>
 </div>
 <div>
 	<h3>Your evaluation of the module</h3>
 	<p>Did you deviate from the module profile?: {{@report->deviate}}</p>
-	<p>Does the module specification need updating?: {{@report->updatespecification}}</p>
+	<p>Does the module profile need updating?: {{@report->updatespecification}}</p>
 	<p>Were students adequately prepared e.g. by any pre-requisite modules?: {{@report->studentsprepared}}</p>
 	<p>Did the learning resources adequately support the module?: {{@report->learningresourcesupport}}</p>
 	<p>Do you feel the students made adequate progress on the module?: {{@report->studentprogress}}</p>

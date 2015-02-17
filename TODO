@@ -1,7 +1,9 @@
-you need to be able to see who has filled out reports which module 
-report for not filled out
 report not module leader in banner
 evasys into form 
-get dains spreadsheet into banner
-module pdfs should be called ECON1001modrepS1_201314.pdf
-put a question about user experience filling out their form
+== to be completed by 13th ==
+-- on the completed report make the default sort alphabetical with an option to sort by recently completed
+add versioning to the completed reports so editing a submitted report creates a new one
+turn on spell checking in the editor
+--add navigation to browse through academic years
+--added an addition chunk to assessment data section which says N students with 0 (not counted in the average).
+--new importer

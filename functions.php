@@ -31,6 +31,13 @@ function output_csv($courses, $filename)
 function form_conf($course){
 	F3::set("course", $course);
 	$assessment_section = Template::instance()->render("reportassessmentsection.htm");
+	
+	$response_rate = array("TEXT"=>array("id" => "responserate", "title"=>$course->code." Response rate"));
+	if($course->evasysresponserate)
+	{
+		$response_rate = array("INFO"=>array("description_html"=>"<p>".$course->code." Response rate: ".$course->evasysresponserate."% (taken from Evasys, note this is for the whole module code not for just this CRN)</p>"));
+	}
+
 	$user = current_user();
 	$yesno = array( "yes"=>"Yes", "no"=>"No");
 $form_conf = array(
@@ -72,12 +79,12 @@ $form_conf = array(
 #))),
 array("SECTION" => array( "title" => "Student Feedback: Module Survey", "fields" => array(
 	array( "HTML"=> array( "id"=>"commentonmoduleevaluation", "title"=>"Comment on the module evaluation results", "rows"=>"20", "description"=>"Please note it is possible to copy and paste formatted text and tables into the section below.")),
-	array("TEXT"=>array("id" => "responserate", "title"=>"Response rate")),  
+	$response_rate,  
 
 ))),
 array("SECTION" => array( "title" => "Your evaluation of the module", "fields" => array(
 	array("CHOICE" => array("id" => "deviate", "title"=>"Did you deviate from the module profile?", "choices" => $yesno)),
-	array("CHOICE" => array("id" => "updatespecification", "title"=>"Does the module specification need updating?", "choices" => $yesno)),
+	array("CHOICE" => array("id" => "updatespecification", "title"=>"Does the module profile need updating?", "choices" => $yesno)),
 	array("CHOICE" => array("id" => "studentsprepared", "title"=>"Were students adequately prepared e.g. by any pre-requisite modules?", "choices" => $yesno)),
 	array("CHOICE" => array("id" => "learningresourcesupport", "title"=>"Did the learning resources adequately support the module?", "choices" => $yesno)),
 	array("CHOICE" => array("id" => "studentprogress", "title"=>"Do you feel the students made adequate progress on the module?", "choices" => $yesno)),

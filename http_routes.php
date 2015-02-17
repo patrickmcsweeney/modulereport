@@ -6,8 +6,15 @@ function my_courses($f3)
 	$person = current_user(); 
 	$f3->set("title", "My Modules");
 	$reports = array();
+	$courses = array();
 	foreach($person->sharedCourse as $course)
 	{
+		if($course->session != $f3->get("current_session"))
+		{
+			continue;
+		}
+		
+		$courses[] = $course;
 		foreach($course->sharedReport as $report)
 		{	
 			if($report->staffid == $person->staffid)
@@ -19,7 +26,7 @@ function my_courses($f3)
 			}
 		}
 	}
-	$f3->set("courses",$person->sharedCourse);
+	$f3->set("courses",$courses);
 	$f3->set("reports_complete", $reports);
 	$f3->set("templates", array("courses.htm"));
         echo Template::instance()->render("internal_style/main.htm");
@@ -28,7 +35,7 @@ function my_courses($f3)
 function edit_report($f3)
 {
 	authenticate($f3);
-	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+	$course = R::findOne("course", " crn=? and session = ?", array($f3->get("PARAMS.crn"), $f3->get("current_session")));
 
 	$form_conf = form_conf($course);
 	$user = current_user();
@@ -69,7 +76,7 @@ function json_report($f3)
 function save_report($f3)
 {
 	authenticate($f3);
-	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+	$course = R::findOne("course", " crn=? and session = ?", array($f3->get("PARAMS.crn"), $f3->get("current_session")));
 	$form_conf = form_conf($course);
 	$form = new FloraForm(array("action"=>"/save/report"));
 	$form->processConfig($form_conf);
@@ -106,7 +113,7 @@ function save_report($f3)
 
 function view_reports($f3)
 {
-	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
+	$course = R::findOne("course", " crn=? and session=? ", array($f3->get("PARAMS.crn"), $f3->get("PARAMS.session")));
 
 	$reports = $course->sharedReport;
 	$f3->set("reports", $reports);
@@ -121,7 +128,7 @@ function pdf_reports($f3)
 	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
 #ECON1001modrepS1_201314.pdf
 	$filename = $course->code."modrep".$course->semestercode."_".$course->session.".pdf";
-	$url = $f3->get("SCHEME")."://".$f3->get("HOST")."/view/reports/".$course->crn;
+	$url = $f3->get("SCHEME")."://".$f3->get("HOST")."/view/reports/".$course->crn."/".$f3->get("PARAMS.session");
 	
 	header("Pragma: ");
 	header("Cache-Control: ");
@@ -147,11 +154,11 @@ function claim_courses($f3)
 
 	if($user->facultycode)
 	{
-		$courses = R::find("course", " facultycode=? ORDER BY code ", array($user->facultycode));
+		$courses = R::find("course", " session=? and facultycode=? ORDER BY code ", array($f3->get("current_session"), $user->facultycode));
 	}
 	else
 	{
-		$courses = R::find("course", " ORDER BY code " );
+		$courses = R::find("course", " session=? ORDER BY code ", array($f3->get("current_session")) );
 	}
 	$f3->set("allcourses", $courses);
 	$f3->set("title", "Search modules");
@@ -165,7 +172,9 @@ function save_courses($f3)
 	authenticate($f3);
 	$crns_str = $f3->get("REQUEST.crns");
 	$crns = explode(",", $crns_str);
-	$courses = R::find("course", " crn in ( ".R::genSlots($crns)." ) ", $crns);
+	$sql_params = $crns;
+	$sql_params[] = $f3->get("current_session");
+	$courses = R::find("course", " crn in ( ".R::genSlots($crns)." ) and session = ?", $sql_params);
 	$user = current_user();
 	$user->sharedCourse = $courses;
 	R::store($user);
@@ -184,7 +193,7 @@ function guidance($f3)
 function report_menu($f3)
 {
 	$f3->set("title", "Choose a report ");
-	$f3->set("templates", array("reportmenu.htm"));
+	$f3->set("templates", array("years.htm", "reportmenu.htm"));
   
         echo Template::instance()->render("internal_style/main.htm");
 }
@@ -193,16 +202,29 @@ function faculty_menu($f3)
 {
 	$report_titles = array("completed"=>"Completed module reports", "uncompleted"=>"Uncompleted module reports");
 	$f3->set("title", $report_titles[$f3->get("PARAMS.report")]);
-	$f3->set("templates", array("facultymenu.htm"));
+	$f3->set("templates", array( "years.htm", "facultymenu.htm"));
   
         echo Template::instance()->render("internal_style/main.htm");
 }
 
 function report_completed($f3)
 {
-	$sql = 'SELECT distinct course.* FROM course JOIN course_report ON course.id = course_report.course_id JOIN report ON course_report.report_id = report.id WHERE report.submit = "Save and submit" and course.facultycode = ? order by report.timecompleted desc ';
+	$sql = 'SELECT distinct course.* FROM course JOIN course_report ON course.id = course_report.course_id JOIN report ON course_report.report_id = report.id WHERE report.submit = "Save and submit" and course.facultycode = ? and course.session = ?';
 
-    	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty")));
+	$order_by = ' order by course.code asc ';
+
+	$templates = array();
+
+	if($f3->exists("REQUEST.orderbydate"))
+	{
+		$order_by = ' order by report.timecompleted desc ';
+	}else{
+		$templates[] = "orderbydate.htm";
+	}
+
+	$sql .= $order_by;
+
+    	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty"), $f3->get("SESSION.selected_session")));
 
 	$courses = R::convertToBeans('course',$rows);
 	
@@ -212,9 +234,11 @@ function report_completed($f3)
 		exit;
 	}
 
+	$templates[] = "years.htm";
+	$templates[] = "reportcourses.htm";
 	$f3->set("courses", $courses);
 	$f3->set("title", "Completed module reports");
-	$f3->set("templates", array("reportcourses.htm"));
+	$f3->set("templates", $templates);
   
 	echo Template::instance()->render("internal_style/main.htm");
 	
@@ -223,9 +247,9 @@ function report_completed($f3)
 
 function report_uncompleted($f3)
 {
-	$sql = 'SELECT distinct course.* FROM course LEFT JOIN course_report ON course.id = course_report.course_id LEFT JOIN report on course_report.report_id  = report.id WHERE (report.submit != "Save and submit" or report.submit is null) and course.facultycode = ? order by course.code ';
+	$sql = 'SELECT distinct course.* FROM course LEFT JOIN course_report ON course.id = course_report.course_id LEFT JOIN report on course_report.report_id  = report.id WHERE (report.submit != "Save and submit" or report.submit is null) and course.facultycode = ? and session = ? order by course.code ';
 
-    	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty")));
+    	$rows = R::getAll($sql, array($f3->get("PARAMS.faculty"), $f3->get("current_session")));
 
 	$courses = R::convertToBeans('course',$rows);
 	
@@ -237,7 +261,7 @@ function report_uncompleted($f3)
 
 	$f3->set("courses", $courses);
 	$f3->set("title", "Uncompleted module reports");
-	$f3->set("templates", array("reportcourses.htm"));
+	$f3->set("templates", array("year.htm","reportcourses.htm"));
   
         echo Template::instance()->render("internal_style/main.htm");
 }

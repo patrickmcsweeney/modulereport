@@ -1,0 +1,113 @@
+#!/usr/bin/php
+<?php
+$CMD = true;
+require_once(__DIR__."/../index.php");
+
+$usage = "
+	command <bannerfile> [evasysfile]
+";
+
+$module_evaluation = array();
+
+if(count($argv) > 2) {
+	$evasys_data= fopen($argv[2], 'r') or warn("The evasys file specified could not be opened\n");
+	
+	$theoretical_headings = array('Subunit','Dean','Course ID','Course Name','Instructor Name','Instructor EMail','Term','Enrollment Number','Number of Responses','Response Rate Percentage');
+	$headings = fgetcsv($evasys_data);
+	foreach($headings as $heading)
+	{
+		if($heading && !in_array($heading, $theoretical_headings))
+		{
+			die("Headings in this csv have changed name '$heading' not known - NOT IMPORTING\n");
+		}
+	}
+
+	while( $data = fgetcsv($evasys_data))
+	{	
+		for($i = 0; $i < count($headings); $i++)
+		{
+			$module_code = substr($data[3],0,8);
+			$module_evaluation[$module_code][$headings[$i]] = $data[$i];
+		}	
+	}
+}
+
+
+$theoretical_headings = array( 'SZVOMOD_TERM_CODE','SZVOMOD_CRN','SZVOMOD_SUBJ_CODE','SZVOMOD_CRSE_NUMB','SZVOMOD_CRSE_TITLE','SZVOMOD_PTRM_CODE','SZVOMOD_PTRM_DESC','SZVOMOD_PTRM_START_DATE','SZVOMOD_PTRM_END_DATE','SZVOMOD_COLL_CODE','SZVOMOD_COLL_DESC','SZVOMOD_DEPT_CODE','SZVOMOD_DEPT_DESC','SZVOMOD_CAMP_CODE','SZVOMOD_CRSE_LEVEL','SZVOMOD_STU_CNT','SZVOMOD_STU_ZERO_CNT','SZVOMOD_AVG_MARK','SZVOMOD_MARK_100_80','SZVOMOD_MARK_79_70','SZVOMOD_MARK_69_60','SZVOMOD_MARK_59_50','SZVOMOD_MARK_49_40','SZVOMOD_MARK_39_25','SZVOMOD_MARK_24_0','SZVOMOD_ASSESS_EXAM','SZVOMOD_ASSESS_CRSE','SZVOMOD_ASSESS_OTHER','SZVOMOD_MODULE_LEAD_ID','SZVOMOD_MODULE_LEAD_NAME');
+$courses_data= fopen($argv[1], 'r') or die($usage);
+$headings = fgetcsv($courses_data);
+
+foreach($headings as $heading)
+{
+	if($heading && !in_array($heading, $theoretical_headings))
+	{
+		die("Headings in this csv have changed name '$heading' not known - NOT IMPORTING\n");
+	}
+}
+
+while( $data = fgetcsv($courses_data))
+{
+	$course_data = array();
+	for($i=0; $i < count($headings); $i++)
+	{
+		$heading = preg_replace('/SZVOMOD_/', "", $headings[$i]);
+		$course_data[$heading] = $data[$i];
+	}
+
+	$course = R::findOne("course", " crn=? and session=?", array($course_data["CRN"], $course_data["TERM_CODE"]));
+	if(!isset($course))
+	{
+		$course = R::dispense("course");
+	}
+
+	$module_code = $course_data["SUBJ_CODE"].$course_data["CRSE_NUMB"];
+
+	$course->title = @$course_data["CRSE_TITLE"];
+	$course->code = $module_code; 
+	$course->crn = $course_data["CRN"];
+	$course->semester = $course_data["PTRM_DESC"];
+	$course->campus = $course_data["CAMP_CODE"];
+	$course->facultycode = $course_data["COLL_CODE"];
+	$course->faculty = $course_data["COLL_DESC"];
+	$course->departmentcode = $course_data["DEPT_CODE"];
+	$course->department = $course_data["DEPT_DESC"];
+	$course->session = $course_data["TERM_CODE"];
+	$course->levelcode = $course_data["CRSE_LEVEL"];
+
+	$course->numberofstudents = $course_data["STU_CNT"];
+	$course->averagemark = $course_data["AVG_MARK"];
+	$course->mark10080 = $course_data["MARK_100_80"];
+	$course->mark7970 = $course_data["MARK_79_70"];
+	$course->mark6960 = $course_data["MARK_69_60"];
+	$course->mark5950 = $course_data["MARK_59_50"];
+	$course->mark4940 = $course_data["MARK_49_40"];
+	$course->mark3925 = $course_data["MARK_39_25"];
+	$course->mark2400 = $course_data["MARK_24_0"];
+	#Students who scored exactly 0 are not counted in the average mark and are displayed seperately
+	$course->mark0000 = $course_data["STU_ZERO_CNT"];
+	$course->assessexam = $course_data["ASSESS_EXAM"];
+	$course->assesscoursework = $course_data["ASSESS_CRSE"];
+	$course->assessother = $course_data["ASSESS_OTHER"];
+	$course->evasysstudentcount = @$module_evaluation[$module_code]["Enrollment Number"];
+	$course->evasysresponsecount = @$module_evaluation[$module_code]["Number of Responses"];
+	$course->evasysresponserate = @$module_evaluation[$module_code]["Response Rate Percentage"];
+
+	
+	if($course_data["MODULE_LEAD_ID"])
+	{
+		$person = R::findOne("person", " staffid=? ", array($course_data["MODULE_LEAD_ID"]));
+		if(!isset($person))
+		{
+			#stop me if you can see where this will go wrong all the time....
+			list($first, $last) = explode(" ", $course_data["MODULE_LEAD_NAME"], 2);
+			$person = R::dispense("person");
+			$person->staffid = $course_data["MODULE_LEAD_ID"];
+			$person->givenname = $first;
+			$person->familyname = $last;
+			R::store($person);
+		}
+		$course->sharedPerson[] = $person;
+	}
+
+	R::store($course);
+}

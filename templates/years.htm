@@ -1,0 +1,13 @@
+<ol class="years">
+<repeat group="{{@years}}" key="{{@sessioncode}}" value="{{@session}}">
+	<check if="{{@sessioncode == @SESSION.selected_session}}">
+		<true>
+			<li><strong>{{@session}}</strong></li>
+		</true>
+		<false>
+			<li><a href="?selected_session={{@sessioncode}}">{{@session}}</a></li>
+		</false>
+	</check>
+
+</repeat>
+</ol>
