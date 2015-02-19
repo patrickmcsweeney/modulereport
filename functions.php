@@ -35,7 +35,7 @@ function form_conf($course){
 	$response_rate = array("TEXT"=>array("id" => "responserate", "title"=>$course->code." Response rate"));
 	if($course->evasysresponserate)
 	{
-		$response_rate = array("INFO"=>array("description_html"=>"<p>".$course->code." Response rate: ".$course->evasysresponserate."% (taken from Evasys, note this is for the whole module code not for just this CRN)</p>"));
+		$response_rate = array("INFO"=>array("description_html"=>"<p class='ff_combo responsrate_container'><strong>".$course->code." Response rate</strong>: ".$course->evasysresponserate."% (taken from Evasys, note this is for the whole module not for just this CRN)</p>"));
 	}
 
 	$user = current_user();

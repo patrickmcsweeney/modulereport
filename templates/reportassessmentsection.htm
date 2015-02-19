@@ -10,7 +10,7 @@
 		<span class="ff_component ff_field">39-25: <strong>{{@course->mark3925}}%</strong>,</span>
 		<span class="ff_component ff_field">24-0: <strong>{{@course->mark2400}}%</strong></span>
 		<check if="{{@course->mark0000 > 0}}">
-			<p class="studentswithzero">Exactly 0: <strong>{{@course->mark0000}} students not counted towards the average</strong></p>
+			<p class="studentswithzero">“Students with zero marks not counted towards average: <strong>{{@course->mark0000}}</strong></p>
 		</check>
 	</span>
 	<span class="ff_field ff_combo average-mark"><p>Average Mark: <strong>{{@course->averagemark}}%</strong></p></span>

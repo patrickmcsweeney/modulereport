@@ -26,6 +26,7 @@ function my_courses($f3)
 			}
 		}
 	}
+	print_r($reports);
 	$f3->set("courses",$courses);
 	$f3->set("reports_complete", $reports);
 	$f3->set("templates", array("courses.htm"));
@@ -145,12 +146,18 @@ function claim_courses($f3)
 	$user = current_user();
 	$staffid=$user->staffid;
 	$person = R::findOne("person", " staffid=? ", array($staffid));
+	$my_courses = array();
 	if(isset($person))
 	{
-		$f3->set("mycourses",$person->sharedCourse);
-	}else{
-		$f3->set("mycourses", array());
+		foreach($person->sharedCourse as $course)
+		{
+			if($course->session == $f3->get("current_session"))
+			{
+				$my_courses[] = $course;
+			}
+		}	
 	}
+	$f3->set("mycourses", $my_courses);
 
 	if($user->facultycode)
 	{
@@ -261,7 +268,7 @@ function report_uncompleted($f3)
 
 	$f3->set("courses", $courses);
 	$f3->set("title", "Uncompleted module reports");
-	$f3->set("templates", array("year.htm","reportcourses.htm"));
+	$f3->set("templates", array("years.htm","reportcourses.htm"));
   
         echo Template::instance()->render("internal_style/main.htm");
 }
