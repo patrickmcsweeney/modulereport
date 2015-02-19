@@ -26,7 +26,7 @@ function my_courses($f3)
 			}
 		}
 	}
-	print_r($reports);
+
 	$f3->set("courses",$courses);
 	$f3->set("reports_complete", $reports);
 	$f3->set("templates", array("courses.htm"));
@@ -69,7 +69,6 @@ function edit_report($f3)
 function json_report($f3)
 {
 	$course = R::findOne("course", " crn=? ", array($f3->get("PARAMS.crn")));
-	#$course = R::findOne("course", " crn = ? ", array( $f3->get("PARAMS.crn"))); 
 	echo json_encode( R::exportAll($course) );
 	
 }

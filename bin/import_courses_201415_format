@@ -8,11 +8,13 @@ $usage = "
 ";
 
 $module_evaluation = array();
+$crn_evaluation = array();
 
 if(count($argv) > 2) {
 	$evasys_data= fopen($argv[2], 'r') or warn("The evasys file specified could not be opened\n");
 	
-	$theoretical_headings = array('Subunit','Dean','Course ID','Course Name','Instructor Name','Instructor EMail','Term','Enrollment Number','Number of Responses','Response Rate Percentage');
+	#$theoretical_headings = array('Subunit','Dean','Course ID','Course Name','Instructor Name','Instructor EMail','Term','Enrollment Number','Number of Responses','Response Rate Percentage');
+	$theoretical_headings = array('Subunit','Multiples?','LOAD?','Course','CRN','Name','Term','Enrollment Number','Number of Responses','Response Rate Percentage','Calc');
 	$headings = fgetcsv($evasys_data);
 	foreach($headings as $heading)
 	{
@@ -24,10 +26,14 @@ if(count($argv) > 2) {
 
 	while( $data = fgetcsv($evasys_data))
 	{	
+		if($data[2] != "Y"){ print "found N\n"; continue; } 
+		$module_code = substr($data[3],0,8);
+		$crn = $data[4];
+		
 		for($i = 0; $i < count($headings); $i++)
 		{
-			$module_code = substr($data[3],0,8);
 			$module_evaluation[$module_code][$headings[$i]] = $data[$i];
+			$crn_evaluation[$crn][$headings[$i]] = $data[$i];
 		}	
 	}
 }
@@ -88,9 +94,16 @@ while( $data = fgetcsv($courses_data))
 	$course->assessexam = $course_data["ASSESS_EXAM"];
 	$course->assesscoursework = $course_data["ASSESS_CRSE"];
 	$course->assessother = $course_data["ASSESS_OTHER"];
-	$course->evasysstudentcount = @$module_evaluation[$module_code]["Enrollment Number"];
-	$course->evasysresponsecount = @$module_evaluation[$module_code]["Number of Responses"];
-	$course->evasysresponserate = @$module_evaluation[$module_code]["Response Rate Percentage"];
+	if(array_key_exists($course_data["CRN"], $crn_evaluation)){
+		print "crn module!\n";
+		$course->evasysstudentcount = @$crn_evaluation[$course_data["CRN"]]["Enrollment Number"];
+		$course->evasysresponsecount = @$crn_evaluation[$course_data["CRN"]]["Number of Responses"];
+		$course->evasysresponserate = @$crn_evaluation[$course_data["CRN"]]["Response Rate Percentage"];
+	} else {
+		$course->evasysstudentcount = @$module_evaluation[$module_code]["Enrollment Number"];
+		$course->evasysresponsecount = @$module_evaluation[$module_code]["Number of Responses"];
+		$course->evasysresponserate = @$module_evaluation[$module_code]["Response Rate Percentage"];
+	}
 
 	
 	if($course_data["MODULE_LEAD_ID"])
