@@ -1,2 +1,6 @@
 tmp/
 secrets.ini
+secrets.local.dev.ini
+secrets.soton.dev.ini
+secrets.soton.live.ini
+var/
