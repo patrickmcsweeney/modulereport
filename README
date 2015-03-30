@@ -1,0 +1,19 @@
+# Module report
+
+This is the University of Southampton module report system. It allows you to report on the results and feedback from modules. The resulting document can be collected as PDF or have reports run on it.
+
+## Licence
+
+This software was writen by Patrick McSweeney but uses FatFree PHP, RedBean PHP, Jquery and FloraForm all of which are licenced seperately.
+
+This software is copyright of the University of Southampton but is released under the GPL v2 licence.
+
+## Installation
+
+Clone the repository into your document root
+
+Copy secrets.ini.template to secrets.ini and modify the values for your database
+
+touch var/department_map.php
+
+Happy reporting
